@@ -7,6 +7,9 @@
 !/.config
 /.config/*
 
+# github
+!/.github
+
 # gitignore
 !/.config/git
 /.config/git/*
