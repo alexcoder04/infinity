@@ -7,15 +7,37 @@
 !/.config
 /.config/*
 
+# gitignore
+!/.config/git
+/.config/git/*
+!/.config/git/gitignore-dotfiles
+
+# htop
+!/.config/htop
+
+# libinput-gestures
+!/.config/libinput-gestures.conf
+
+# neomutt
+!/.config/neomutt
+/.config/neomutt/*
+!/.config/neomutt/colorscheme.muttrc
+!/.config/neomutt/keybinds.muttrc
+!/.config/neomutt/mailcap
+!/.config/neomutt/neomuttrc
+
 # newsboat
 !/.config/newsboat
 /.config/newsboat/*
 !/.config/newsboat/config
 
-# gitignore
-!/.config/git
-/.config/git/*
-!/.config/git/gitignore-dotfiles
+# qutebrowser
+!/.config/qutebrowser
+/.config/qutebrowser/*
+!/.config/qutebrowser/config.py
+
+# sx
+!/.config/sx
 
 # }}}
 
