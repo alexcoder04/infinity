@@ -1,0 +1,67 @@
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+#
+# highlighting from
+# <https://github.com/LukeSmithxyz/voidrice/blob/master/.config/newsboat/config>
+#                                                          
+# newsboat (RSS reader) config
+
+auto-reload no
+reload-threads 64
+
+browser "sh -c 'qutebrowser %u >/dev/null 2>&1 &'"
+
+macro v set browser "sh -c 'notify-send video_starts... && mpv --no-terminal %u >/dev/null 2>&1 &'" ; open-in-browser ; set browser "sh -c 'qutebrowser %u >/dev/null 2>&1 &'"
+macro w set browser "w3m %u" ; open-in-browser ; set browser "sh -c 'qutebrowser %u >/dev/null 2>&1 &'"
+
+external-url-viewer "newsboat-iv"
+bind-key I show-urls
+
+color info cyan white bold
+color listnormal white default
+color listnormal_unread cyan default
+color listfocus green black bold
+color listfocus_unread yellow black bold
+color article white default bold
+
+unbind-key j
+unbind-key k
+unbind-key h
+unbind-key l
+
+bind-key j down
+bind-key k up
+bind-key h quit
+bind-key l open
+
+unbind-key G
+unbind-key g
+unbind-key d
+unbind-key u
+unbind-key L
+
+bind-key d pagedown
+bind-key u pageup
+bind-key G end
+bind-key g home
+bind-key L toggle-show-read-feeds
+
+# highlighting (from https://github.com/LukeSmithxyz/voidrice/blob/master/.config/newsboat/config)
+highlight all "---.*---" yellow
+highlight feedlist ".*(0/0))" black
+highlight article "(^Feed:.*|^Title:.*|^Author:.*)" cyan default bold
+highlight article "(^Link:.*|^Date:.*)" default default
+highlight article "https?://[^ ]+" green default
+highlight article "^(Title):.*$" blue default
+highlight article "\\[[0-9][0-9]*\\]" magenta default bold
+highlight article "\\[image\\ [0-9]+\\]" green default bold
+highlight article "\\[embedded flash: [0-9][0-9]*\\]" green default bold
+highlight article ":.*\\(link\\)$" cyan default
+highlight article ":.*\\(image\\)$" blue default
+highlight article ":.*\\(embedded flash\\)$" magenta default
+
