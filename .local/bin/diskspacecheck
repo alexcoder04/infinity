@@ -1,0 +1,21 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021 alexcoder04 <https://github.com/alexcoder04>
+# 
+# show current disk space usage for root and home
+
+# awk regex for the partitions
+root=' \/$'
+home=' \/home$'
+
+get_info(){
+  df | awk "/$1/{ print \$5 }"
+}
+
+echo "/-$(get_info "$root") /h-$(get_info "$home")"
+

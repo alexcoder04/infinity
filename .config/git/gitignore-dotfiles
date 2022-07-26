@@ -44,3 +44,17 @@
 
 # }}}
 
+# .LOCAL/BIN {{{
+
+!/.local
+/.local/*
+!/.local/bin
+/.local/bin/*
+!/.local/bin/cpustat
+!/.local/bin/diskspacecheck
+!/.local/bin/myenv
+!/.local/bin/ramstatramstate
+!/.local/bin/wifi-toggle
+
+# }}}
+

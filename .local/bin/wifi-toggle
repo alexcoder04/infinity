@@ -1,0 +1,20 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# helper script to turn on/off wifi with nmcli (NetworkManager)
+# for use in combination with other scripts e. g. i3blocks click event
+
+wifi_set(){
+  nmcli radio wifi "$1" && echo "wifi $1"
+}
+
+[ "$(cat "${1:-/sys/class/net/wlan0}/operstate")" = "up" ] \
+  && wifi_set off \
+  || wifi_set on
+
