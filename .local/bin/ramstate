@@ -1,0 +1,32 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# check ram usage
+
+# if your locale is not set to english, free might output stuff in another language
+free_wrap(){
+    LANG=en_US.utf8 free "$@"
+}
+
+case "$1" in
+  -p | --percent | percent)
+      free_wrap | awk '/Mem/{ printf("%.2f%\n"), $3/$2*100 }'
+      ;;
+  -m | --megabyte | mb)
+      free_wrap -m | awk '/Mem/{ print $3 }'
+      ;;
+  -s | --with-shared | +tmp)
+      data="$(free_wrap -m)"
+      echo $(($(echo "$data" | awk '/Mem/{ print $2 }') - $(echo "$data" | awk '/Mem/{ print $NF }')))
+      ;;
+  *)
+      free_wrap -m | awk '/Mem/{ print $3,"M" }'
+      ;;
+esac
+

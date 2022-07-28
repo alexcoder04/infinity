@@ -53,7 +53,7 @@
 !/.local/bin/cpustat
 !/.local/bin/diskspacecheck
 !/.local/bin/myenv
-!/.local/bin/ramstatramstate
+!/.local/bin/ramstate
 !/.local/bin/wifi-toggle
 
 # }}}
