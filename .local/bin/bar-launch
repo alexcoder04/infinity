@@ -1,0 +1,30 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# launching bars with different settings
+
+get_monitors(){
+  xrandr | grep " connected " | cut -d" " -f1
+}
+
+launch_polybar(){
+  for mon in $(get_monitors); do
+    MONITOR="$mon" polybar "mainbar-$1" \
+      >"${TMPDIR:-/tmp}/polybar-$1-$mon-$(date +%m%d%H%M).log" 2>&1 &
+  done
+  disown
+}
+
+killall polybar
+case "$1" in
+  i3-polybar) launch_polybar "i3" ;;
+  bspwm | bspwm-polybar) launch_polybar "bspwm" ;;
+  *) echo "Invalid argument"; exit 1 ;;
+esac
+

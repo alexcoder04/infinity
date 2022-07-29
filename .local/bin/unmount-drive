@@ -1,0 +1,25 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# show a list of all unmountable drives and unmount the selected one
+
+. libsh || exit 1
+
+selected_drive="$(df -x devtmpfs --output=target \
+  | tail -n +2 \
+  | grep -vE "^(/dev|/run|/sys)" \
+  | grep -vE "^(/|/boot|/home|/media/cache)$" \
+  | prompt_gui "umount")"
+
+[ -z "$selected_drive" ] \
+    && exit 0
+
+launch -h -f \
+  eval "echo \"unmounting $selected_drive\"; doas umount -v $selected_drive && echo \"$closemsg\""
+

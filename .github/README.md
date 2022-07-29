@@ -15,8 +15,8 @@ according to a uniform colorscheme, settings for different machines etc. Also I
 had an additional repository for my scripts, however they should have belonged
 together with the dotfiles - you are starting to see what kind of mess it was.
 That's why I started working on a clean new way to customize my desktop. The
-name comes from an idea I had for some time to build an own desktop environment
-- the name for it would've been "infinity"; it was also the name of a website I
+name comes from an idea I had for some time to build an own desktop environment -
+the name for it would've been "infinity"; it was also the name of a website I
 maintaned for some time with the docs for all of the projects that go into my
 desktop setup.
 

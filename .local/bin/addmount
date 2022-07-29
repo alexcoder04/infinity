@@ -1,0 +1,50 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# addmount - mount additional filesystems
+# - usb/removeable drives
+# - drives "database" in $XDG_CONFIG_HOME/mountopts
+
+. libsh || exit 1
+
+# USB / removeable {{{
+mount_usb(){
+  selected="$(lsblk -al -o NAME,FSTYPE,SIZE,MOUNTPOINT \
+    | tail -n +2 \
+    | grep -vE '(/|disk|crypto_LUKS)' \
+    | prompt_gui "mount" \
+    | cut -d" " -f1)"
+  [ -z "$selected" ] && exit 0
+
+  params="$(find /media -maxdepth 1 | prompt_gui "mountpoint")"
+  [ -z "$params" ] && exit 0
+
+  launch -h -f \
+    eval "echo \"doas mount /dev/$selected $params\"; doas mount /dev/$selected $params && echo \"$closemsg\""
+}
+# }}}
+
+# "database" {{{
+mount_optional(){
+  [ -f "$XDG_CONFIG_HOME/mountopts" ] \
+    || die_gui "mountopts file not found"
+
+  selected="$(prompt_gui "mount" <"$XDG_CONFIG_HOME/mountopts")"
+  [ -z "$selected" ] && exit 0
+
+  launch -h -f \
+    eval "echo \"doas mount $selected\"; doas mount -v $selected && echo \"$closemsg\""
+}
+# }}}
+
+case "$1" in
+  --usb | -u | --removeable ) mount_usb ;;
+  *) mount_optional ;;
+esac
+
