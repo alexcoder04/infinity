@@ -20,6 +20,6 @@ selected_drive="$(df -x devtmpfs --output=target \
 [ -z "$selected_drive" ] \
     && exit 0
 
-launch -h -f \
-  eval "echo \"unmounting $selected_drive\"; doas umount -v $selected_drive && echo \"$closemsg\""
+window \
+  sh -c "echo \"unmounting $selected_drive\"; doas umount -v $selected_drive && echo \"$closemsg\""
 

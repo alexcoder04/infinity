@@ -1,0 +1,114 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# SH functions and variables for my scripts
+
+# VARIABLES {{{
+closemsg="ready. you can close this window now"
+# }}}
+
+# INTERNAL functions {{{
+# set specied color if outputting to console
+_set_color(){
+  if [ -t 1 ]; then
+    pre="\033[$1m"; post="\033[0m"
+  else
+    pre=""; post=""
+  fi
+}
+# }}}
+
+# MESSAGES to the user {{{
+# ERROR and exit
+die(){
+  _set_color 31
+  echo "${pre}Error${post}: $1" "$2"
+  exit 1
+}
+
+die_gui(){
+  notify-send -u critical "Error: $1" "$2"
+  die "$@"
+}
+
+# legacy version
+die_notify(){
+  die_gui "$@"
+}
+
+# WARNING
+warn(){
+  _set_color 33
+  echo "${pre}Warning${post}: $1" "$2"
+}
+
+warn_gui(){
+  notify-send "Warning: $1" "$2"
+  warn "$@"
+}
+
+# INFO
+inform(){
+  _set_color 34
+  echo "${pre}Info${post}: $1" "$2"
+}
+
+inform_gui(){
+  notify-send "Info: $1" "$2"
+  inform "$@"
+}
+
+# LOW PRIORITY INFO
+lp_inform(){
+  _set_color 37
+  echo "${pre}Info${post}: $1" "$2"
+}
+
+lp_inform_gui(){
+  notify-send -u low -t 1500 "Info: $1" "$2"
+  lp_inform "$@"
+}
+# }}}
+
+# user INPUT {{{
+prompt(){
+  fzf </dev/stdin
+}
+
+prompt_gui(){
+  if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
+    prompt </dev/stdin
+    return
+  fi
+  rofi -dmenu -i -p "$1" </dev/stdin
+}
+# }}}
+
+# FILES {{{
+dir_empty(){
+  [ ! "$(ls -A "$1")" ]
+}
+# }}}
+
+# CLIPBOARD {{{
+clipboard_copy(){
+  if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    wl-copy </dev/stdin
+  else
+    xclip -selection clipboard </dev/stdin
+  fi
+}
+# }}}
+
+# UI {{{
+window(){
+  launch -h -f "$@"
+}
+# }}}
+

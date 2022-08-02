@@ -25,8 +25,8 @@ mount_usb(){
   params="$(find /media -maxdepth 1 | prompt_gui "mountpoint")"
   [ -z "$params" ] && exit 0
 
-  launch -h -f \
-    eval "echo \"doas mount /dev/$selected $params\"; doas mount /dev/$selected $params && echo \"$closemsg\""
+  window \
+    sh -c "echo \"doas mount /dev/$selected $params\"; doas mount /dev/$selected $params && echo \"$closemsg\""
 }
 # }}}
 
@@ -38,8 +38,8 @@ mount_optional(){
   selected="$(prompt_gui "mount" <"$XDG_CONFIG_HOME/mountopts")"
   [ -z "$selected" ] && exit 0
 
-  launch -h -f \
-    eval "echo \"doas mount $selected\"; doas mount -v $selected && echo \"$closemsg\""
+  window \
+    sh -c "echo \"doas mount $selected\"; doas mount -v $selected && echo \"$closemsg\""
 }
 # }}}
 
