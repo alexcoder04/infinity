@@ -1,0 +1,74 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021 alexcoder04 <https://github.com/alexcoder04>
+# 
+# chad battery module for i3blocks
+
+# define colors
+BLUE="${COLOR_BLUE:-#66D9EF}"
+DARK_GREEN="${COLOR_CYAN:-#41CDC3}"
+LIGHT_GREEN="${COLOR_GREEN:-#A6E22E}"
+YELLOW="${COLOR_YELLOW:-#F4BF75}"
+RED="${COLOR_RED:-#F92672}"
+WHITE="${COLOR_WHITE:-#F8F8F2}"
+
+# return error message
+die(){
+  echo "<span foreground='$RED'> $1</span>"
+}
+
+# detect battery device, sometimes it's BAT0, sometimes BAT1
+INTERFACE="/sys/class/power_supply"
+BATTERY_INTERFACE=
+for i in 0 1 2 3 4 5 6 7 8 9; do
+  if [ -e "$INTERFACE/BAT$i" ]; then
+    BATTERY_INTERFACE="$INTERFACE/BAT$i"
+    break
+  fi
+done
+
+# die if no battery found
+[ -z "$BATTERY_INTERFACE" ] && die "No BAT"
+
+# read data
+percent="$(cat "$BATTERY_INTERFACE/capacity")"
+status="$(cat "$BATTERY_INTERFACE/status")"
+
+# set color
+if [ "$percent" -gt "90" ]; then
+  icon=" "; color="$BLUE"
+elif [ "$percent" -gt "60" ]; then
+  icon=" "; color="$DARK_GREEN"
+elif [ "$percent" -gt "30" ]; then
+  icon=" "; color="$LIGHT_GREEN"
+elif [ "$percent" -gt "20" ]; then
+  icon=" "; color="$YELLOW"
+else
+  icon=" "; color="$RED"
+fi
+
+message="$icon $percent% "
+
+# set status
+[ "$status" = "Charging" ] \
+  && message=" $message" && color="$WHITE"
+[ "$status" = "Full" ] \
+  && color="$WHITE"
+
+# output data
+echo "$message"
+echo "$message"
+echo "$color"
+echo "${COLOR_BLACK:-#000000}"
+
+# notification
+[ "$percent" -lt "25" ] && [ "$status" != "Charging" ] \
+  && notify-send -u critical "Battery too low"
+
+exit 0
+

@@ -1,0 +1,35 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# i3-temp: display CPU temperature for i3blocks
+
+for zone in $(find /sys/class/thermal/thermal_zone*); do
+  # we only care about the CPU
+  if [ "$(cat "$zone/type")" != "x86_pkg_temp" ]; then
+    continue
+  fi
+
+  value="$(head -c -4 "$zone/temp")"
+
+  if [ "$value" -gt 69 ]; then
+    icon=" "; color="${COLOR_RED:-#ff0000}"
+  elif [ "$value" -gt 49 ]; then
+    icon=" "; color="${COLOR_YELLOW:-#ffff00}"
+  else
+    icon=" "; color="${COLOR_BRIGHT_GREY:-#aaaaaa}"
+  fi
+
+  echo "${icon} ${value}°C"
+  echo "${icon} ${value}°C"
+  echo "$color"
+  echo "${COLOR_BLACK:-#000000}"
+
+  exit 0
+done
+

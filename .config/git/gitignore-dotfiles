@@ -2,13 +2,13 @@
 # EXCLUDE EVERYTHING
 /*
 
+# github
+!/.github
+
 # .CONFIG {{{
 
 !/.config
 /.config/*
-
-# github
-!/.github
 
 # gitignore
 !/.config/git
@@ -60,8 +60,11 @@
 /.local/bin/*
 !/.local/bin/addmount
 !/.local/bin/bar-launch
+!/.local/bin/bitcoinprice
 !/.local/bin/cpustat
 !/.local/bin/diskspacecheck
+!/.local/bin/i3-battery
+!/.local/bin/i3-temp
 !/.local/bin/internet-search
 !/.local/bin/libsh
 !/.local/bin/myenv
