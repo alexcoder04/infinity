@@ -1,0 +1,29 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2022 alexcoder04 <alexcoder04@protonmail.com>
+# 
+# Arch Linux "checkupdates" wrapper
+
+FIRST_CHECK_FILE="${TMPDIR:-/tmp}/.first-update-check"
+CHECKUPDATES_DB="${TMPDIR:-/tmp}/checkup-db-$(id -u)/"
+
+# don't check the first time after boot to make status bar start up faster
+if [ ! -e "$FIRST_CHECK_FILE" ]; then
+  touch "$FIRST_CHECK_FILE"
+  exit 0
+fi
+
+# sync only if the db is not newer than 30 minutes
+[ -z "$(find "$CHECKUPDATES_DB" -maxdepth 0 -cmin -30 2>/dev/null)" ] \
+  && CHECKUPDATES_ARGS="" \
+  || CHECKUPDATES_ARGS="-n"
+
+updates_count="$(checkupdates "$CHECKUPDATES_ARGS" | wc -l)"
+
+[ "$updates_count" = 0 ] || echo "  $updates_count "
+

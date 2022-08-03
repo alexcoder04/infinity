@@ -23,7 +23,8 @@ desktop setup.
 ## Licensing
 
 The configs are written by me after studying the according documentation for the
-most part and published under the GNU GPLv3 (see `LICENSE`). However, some parts
-are copied from other sources, so different licensing terms may apply to them.
-For foreign code, you can always find the source I got it from in the comments.
+most part and published under the GNU GPLv3 (see `.github/LICENSE`). However,
+some parts are copied from other sources, so different licensing terms may
+apply to them. For foreign code, you can always find the source I got it from
+in the comments.
 

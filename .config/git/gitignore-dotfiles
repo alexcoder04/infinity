@@ -66,6 +66,7 @@
 !/.local/bin/libsh
 !/.local/bin/myenv
 !/.local/bin/unmount-drive
+!/.local/bin/update-checker
 !/.local/bin/ramstate
 !/.local/bin/wifi-toggle
 
