@@ -1,0 +1,7 @@
+Name: brightness-wl
+Command: sh
+Args: ['-c', 'swaymsg -p -t get_outputs | grep -qE "Output HDMI\\-A\\-1.+\\(focused\\)" && doas /usr/local/bin/brightness abs 11000 || doas /usr/local/bin/brightness abs 15000']
+Interval: 0
+KeepAlive: false
+When: wayland
+Delay: 1

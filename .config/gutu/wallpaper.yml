@@ -1,0 +1,7 @@
+Name: wallpaper
+Command: wallpaper-select
+Args: ["--random"]
+Interval: 0
+KeepAlive: false
+When: always
+Delay: 3

@@ -1,0 +1,7 @@
+Name: brightness-x11
+Command: sh
+Args: ['-c', 'xrandr | grep -q "HDMI-1 connected" && doas /usr/local/bin/brightness abs 11000 || doas /usr/local/bin/brightness abs 15000']
+Interval: 0
+KeepAlive: false
+When: x11
+Delay: 1

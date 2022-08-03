@@ -1,0 +1,7 @@
+Name: monitors
+Command: sh
+Args: ['-c', '[ -f "${TMPDIR:-/tmp}/monitors.setting" ] && exec monitors-set']
+Interval: 0
+KeepAlive: false
+When: always
+Delay: 0
