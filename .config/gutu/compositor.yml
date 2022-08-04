@@ -1,0 +1,7 @@
+Name: compositor
+Command: picom
+Args: ["--experimental-backends"]
+KeepAlive: true
+RetryNumber: 3
+When: x11
+KillOld: true

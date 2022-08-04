@@ -2,5 +2,6 @@ Name: wallpaper
 Command: wallpaper-select
 Args: ["--random"]
 KeepAlive: false
+Interval: 600
 When: always
 Delay: 2

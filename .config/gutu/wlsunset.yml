@@ -1,0 +1,8 @@
+Name: wlsunset
+Command: wlsunset
+Args: ["-s", "18:30", "-S", "05:00", "-d", "600"]
+KeepAlive: true
+RetryNumber: 3
+When: wayland
+Delay: 2
+KillOld: true

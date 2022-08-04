@@ -1,0 +1,7 @@
+Name: sxhkd
+Command: sxhkd
+Args: []
+KeepAlive: true
+RetryNumber: 3
+When: x11
+KillOld: true

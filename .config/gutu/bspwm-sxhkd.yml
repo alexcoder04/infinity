@@ -1,0 +1,6 @@
+Name: bspwm-sxhkd
+Command: sh
+Args: ['-c', '[ "$(get_desktop)" = "bspwm" ] && exec sxhkd -c "$XDG_CONFIG_HOME/sxhkd/bspwm.sxhkdrc" || exit 0']
+KeepAlive: true
+RetryNumber: 3
+When: x11

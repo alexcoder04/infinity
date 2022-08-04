@@ -1,0 +1,19 @@
+Name: swayidle
+Command: swayidle
+Args:
+  - timeout
+  - 295
+  - "notify-send -t 4000 'screen turns off in 5 secs!'"
+  - timeout
+  - 300
+  - "screenlock --monitors-off"
+  - resume
+  - "swaymsg 'output * dpms on'"
+  - timeout
+  - 420
+  - "loginctl suspend"
+KeepAlive: true
+RetryNumber: 3
+When: wayland
+Delay: 4
+KillOld: true
