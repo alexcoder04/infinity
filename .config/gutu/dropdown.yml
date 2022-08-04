@@ -1,7 +1,6 @@
 Name: dropdown
-Command: sh
-Args: ["-c", "pgrep -f dropdown >/dev/null || launch -d"]
-Interval: 0
+Command: launch
+Args: ["-d"]
 KeepAlive: false
 When: always
 Delay: 5

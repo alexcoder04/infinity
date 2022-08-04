@@ -1,0 +1,7 @@
+Name: dunst
+Command: dunst
+KeepAlive: true
+RetryNumber: 3
+When: always
+Delay: 0
+KillOld: true

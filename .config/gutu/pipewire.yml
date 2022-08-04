@@ -1,0 +1,6 @@
+Name: pipewire
+Command: pipewire
+KeepAlive: true
+RetryNumber: 3
+When: always
+KillOld: true

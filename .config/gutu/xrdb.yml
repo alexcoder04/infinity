@@ -1,7 +1,6 @@
 Name: xrdb
 Command: xrdb
 Args: ["-load", "/home/alex/.config/X11/Xresources"]
-Interval: 0
 KeepAlive: false
 When: wayland
 Delay: 7

@@ -1,6 +1,6 @@
 Name: nm-applet
 Command: nm-applet
-Interval: 0
 KeepAlive: true
 When: x11
 Delay: 5
+KillOld: true

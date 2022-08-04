@@ -1,6 +1,5 @@
 Name: keyboard
 Command: fix-keyboard
-Interval: 0
 KeepAlive: false
 When: x11
 Delay: 2

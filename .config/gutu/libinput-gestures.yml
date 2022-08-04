@@ -1,7 +1,6 @@
 Name: gestures
 Command: libinput-gestures
 Args: ["restart"]
-Interval: 0
 KeepAlive: false
 When: never
 Delay: 3

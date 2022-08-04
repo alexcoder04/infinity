@@ -1,0 +1,7 @@
+Name: wireplumber
+Command: wireplumber
+KeepAlive: true
+RetryNumber: 3
+When: always
+Delay: 1
+KillOld: true

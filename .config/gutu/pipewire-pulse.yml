@@ -1,0 +1,7 @@
+Name: pipewire-pulse
+Command: pipewire-pulse
+KeepAlive: true
+RetryNumber: 3
+When: always
+Delay: 1
+KillOld: true
