@@ -62,10 +62,11 @@
 
 # }}}
 
-# .LOCAL/BIN {{{
-
 !/.local
 /.local/*
+
+# .LOCAL/BIN {{{
+
 !/.local/bin
 /.local/bin/*
 !/.local/bin/addmount
@@ -73,6 +74,7 @@
 !/.local/bin/bitcoinprice
 !/.local/bin/cpustat
 !/.local/bin/diskspacecheck
+!/.local/bin/fontawesome-select
 !/.local/bin/i3-battery
 !/.local/bin/i3-temp
 !/.local/bin/internet-search
@@ -82,6 +84,17 @@
 !/.local/bin/update-checker
 !/.local/bin/ramstate
 !/.local/bin/wifi-toggle
+!/.local/bin/wm-do
+
+# }}}
+
+# .LOCAL/SHARE {{{
+
+!/.local/share
+/.local/share/*
+!/.local/share/doc
+/.local/share/doc/*
+!/.local/share/doc/fontawesome
 
 # }}}
 

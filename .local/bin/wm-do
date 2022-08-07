@@ -1,0 +1,80 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# wm-do: send commands to different window managers
+
+. libsh || exit 1
+
+# define commands {{{
+case "$(get_desktop)" in
+  i3)
+    DESKTOP_GO_NEXT="i3-msg workspace next"
+    DESKTOP_GO_PREV="i3-msg workspace prev"
+    DESKTOP_MOVE_NEXT="i3-msg move to workspace next"
+    DESKTOP_MOVE_PREV="i3-msg move to workspace prev"
+    QUIT="i3-msg exit" ;;
+  sway)
+    DESKTOP_GO_NEXT="swaymsg workspace next"
+    DESKTOP_GO_PREV="swaymsg workspace prev"
+    DESKTOP_MOVE_NEXT="swaymsg move to workspace next"
+    DESKTOP_MOVE_PREV="swaymsg move to workspace prev"
+    QUIT="swaymsg exit" ;;
+  bspwm)
+    DESKTOP_GO_NEXT="bspc desktop -f next.local"
+    DESKTOP_GO_PREV="bspc desktop -f prev.local"
+    DESKTOP_MOVE_NEXT="bspc node -d next.local"
+    DESKTOP_MOVE_PREV="bspc node -d prev.local" 
+    QUIT="bspc quit" ;;
+  qtile)
+    # TODO
+    DESKTOP_GO_NEXT="false"
+    DESKTOP_GO_PREV="false"
+    DESKTOP_MOVE_NEXT="false"
+    DESKTOP_MOVE_PREV="false" 
+    QUIT="qtile cmd-obj -o cmd -f shutdown" ;;
+  *)
+    die_gui "Your window manager is not supported yet" ;;
+esac
+# }}}
+
+# desktop() {{{
+desktop(){
+  case "$1" in
+    go)
+      case "$2" in
+        next) exec $DESKTOP_GO_NEXT ;;
+        prev) exec $DESKTOP_GO_PREV ;;
+        *) exit 1 ;;
+      esac ;;
+    move)
+      case "$2" in
+        next) exec $DESKTOP_MOVE_NEXT ;;
+        prev) exec $DESKTOP_MOVE_PREV ;;
+        *) exit 1 ;;
+      esac ;;
+    *) exit 1 ;;
+  esac
+}
+# }}}
+
+# quit() {{{
+quit(){
+  case "$1" in
+    +poweroff | --poweroff | -p ) window doas shutdown -h -P now ;;
+    *) exec $QUIT ;;
+  esac
+}
+# }}}
+
+case "$1" in
+  desktop)              desktop "$2" "$3" ;;
+  exit | quit | logout) quit "$2" ;;
+  *) die_gui "Unknown command: \"$1\"" ;;
+esac
+
