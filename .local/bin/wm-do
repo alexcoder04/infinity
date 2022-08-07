@@ -50,15 +50,15 @@ desktop(){
       case "$2" in
         next) exec $DESKTOP_GO_NEXT ;;
         prev) exec $DESKTOP_GO_PREV ;;
-        *) exit 1 ;;
+        *) die_gui "Unknown command: \"desktop go $2\"" ;;
       esac ;;
     move)
       case "$2" in
         next) exec $DESKTOP_MOVE_NEXT ;;
         prev) exec $DESKTOP_MOVE_PREV ;;
-        *) exit 1 ;;
+        *) die_gui "Unknown command: \"desktop move $2\"" ;;
       esac ;;
-    *) exit 1 ;;
+    *) die_gui "Unknown command: \"desktop $1\"" ;;
   esac
 }
 # }}}
