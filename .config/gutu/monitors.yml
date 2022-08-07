@@ -1,5 +1,5 @@
 Name: monitors
 Command: sh
-Args: ['-c', '[ -f "${TMPDIR:-/tmp}/monitors.setting" ] && exec monitors-set']
+Args: ['-c', '[ -f "${TMPDIR:-/tmp}/monitors.setting" ] && exec monitors-set || exit 0']
 KeepAlive: false
 When: always

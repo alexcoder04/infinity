@@ -15,6 +15,9 @@
 /.config/git/*
 !/.config/git/gitignore-dotfiles
 
+# gutu
+!/.config/gutu
+
 # htop
 !/.config/htop
 
@@ -38,9 +41,16 @@
 !/.config/nvim
 /.config/nvim/*
 !/.config/nvim/README.md
-!/.config/nvim/statusline.vim
+!/.config/nvim/automation.vim
+!/.config/nvim/colors
+!/.config/nvim/common.vim
 !/.config/nvim/ftdetect
 !/.config/nvim/ftplugin
+!/.config/nvim/init.vim
+!/.config/nvim/statusline.vim
+!/.config/nvim/syntax
+
+!/.config/nvimpager
 
 # qutebrowser
 !/.config/qutebrowser

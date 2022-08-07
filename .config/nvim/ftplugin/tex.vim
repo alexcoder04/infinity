@@ -24,7 +24,7 @@ inoremap ;f \frac{}{<++>}<Space><++><Esc>F{F{a
 inoremap ;$ $$<Space><++><Esc>F$i
 inoremap ;D \Delta<Space>
 
-inoremap ;! <Esc>:r $HOME/Documents/Templates/latex/default.tex<Enter>
+inoremap ;! <Esc>:r $HOME/Documents/Data/Templates/latex/default.tex<Enter>
 nnoremap <leader>e yyI\begin{<Esc>A}<Esc>pI\end{<Esc>A}<Esc>O
 imap ;e <Esc>b<leader>e
 nnoremap <leader>m i\begin{mdframed}[linecolor=red]<Enter>\end{mdframed}<Esc>O
