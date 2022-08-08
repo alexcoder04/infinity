@@ -10,6 +10,7 @@
 # SH functions and variables for my scripts
 
 # VARIABLES {{{
+fzf_opts="--no-info --cycle --print-query --margin=1,2 --prompt=\"' \" --color=bg+:$COLOR_DARK_GREY"
 closemsg="ready. you can close this window now"
 # }}}
 
@@ -78,7 +79,7 @@ lp_inform_gui(){
 
 # user INPUT {{{
 prompt(){
-  fzf </dev/stdin
+  FZF_DEFAULT_OPTS="$fzf_opts" fzf </dev/stdin
 }
 
 prompt_gui(){
@@ -86,7 +87,13 @@ prompt_gui(){
     prompt </dev/stdin
     return
   fi
-  rofi -dmenu -i -p "$1" </dev/stdin
+
+  FZFPIPE=$(mktemp -u)
+  mkfifo "$FZFPIPE"
+  trap 'rm -f "$FZFPIPE"' EXIT INT
+
+  launch -l sh -c "exec fzf $fzf_opts <$FZFPIPE" & disown
+  cat /dev/stdin >"$FZFPIPE"
 }
 # }}}
 
