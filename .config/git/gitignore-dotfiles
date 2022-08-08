@@ -74,7 +74,7 @@
 !/.local/bin/bitcoinprice
 !/.local/bin/cpustat
 !/.local/bin/diskspacecheck
-!/.local/bin/fontawesome-select
+!/.local/bin/emoji-select
 !/.local/bin/i3-battery
 !/.local/bin/i3-temp
 !/.local/bin/internet-search
@@ -95,7 +95,7 @@
 /.local/share/*
 !/.local/share/doc
 /.local/share/doc/*
-!/.local/share/doc/fontawesome
+!/.local/share/doc/emoji
 
 # }}}
 

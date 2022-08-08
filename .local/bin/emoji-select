@@ -7,11 +7,16 @@
 # 
 # Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
 # 
-# a menu to select and copy a fontawesome symbol
+# a menu to select and copy a fontawesome or unicode symbol
 
 . libsh || exit 1
 
-shuf "${XDG_DATA_HOME:-$HOME/.local/share}/doc/fontawesome/symbols" \
+case "$1" in
+  fontawesome) FILE="${XDG_DATA_HOME:-$HOME/.local/share}/doc/emoji/fontawesome" ;;
+  unicode | *) FILE="${XDG_DATA_HOME:-$HOME/.local/share}/doc/emoji/unicode" ;;
+esac
+
+shuf "$FILE" \
   | prompt_gui "FA" \
   | cut -d" " -f1 \
   | clipboard_copy
