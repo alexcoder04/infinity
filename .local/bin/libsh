@@ -79,7 +79,7 @@ lp_inform_gui(){
 
 # user INPUT {{{
 prompt(){
-  FZF_DEFAULT_OPTS="$fzf_opts" fzf </dev/stdin
+  FZF_DEFAULT_OPTS="$fzf_opts" fzf </dev/stdin | grep -v "^$"
 }
 
 prompt_gui(){
@@ -88,12 +88,17 @@ prompt_gui(){
     return
   fi
 
+  TEMPFILE="$(mktemp)"
   FZFPIPE=$(mktemp -u)
   mkfifo "$FZFPIPE"
-  trap 'rm -f "$FZFPIPE"' EXIT INT
+  trap 'rm -f "$FZFPIPE" "$TEMPFILE" >/dev/null' EXIT INT
 
-  launch -l sh -c "exec fzf $fzf_opts <$FZFPIPE" & disown
+  launch -l \
+    sh -c "exec fzf $fzf_opts <$FZFPIPE >$TEMPFILE" \
+    >/dev/null 2>&1 &
   cat /dev/stdin >"$FZFPIPE"
+  wait
+  grep -vE "^$" "$TEMPFILE"
 }
 # }}}
 

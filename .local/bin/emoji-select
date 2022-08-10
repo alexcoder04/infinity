@@ -16,8 +16,7 @@ case "$1" in
   unicode | *) FILE="${XDG_DATA_HOME:-$HOME/.local/share}/doc/emoji/unicode" ;;
 esac
 
-shuf "$FILE" \
-  | prompt_gui "FA" \
+prompt_gui "emoji" <"$FILE" \
   | cut -d" " -f1 \
   | clipboard_copy
 
