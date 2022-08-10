@@ -52,6 +52,9 @@
 
 !/.config/nvimpager
 
+# python
+!/.config/pythonrc
+
 # qutebrowser
 !/.config/qutebrowser
 /.config/qutebrowser/*
@@ -59,6 +62,17 @@
 
 # sx
 !/.config/sx
+
+# zsh
+!/.config/zsh
+/.config/zsh/*
+!/.config/zsh/README.md
+!/.config/zsh/abbreviations.zsh
+!/.config/zsh/cursor-prompt.zsh
+!/.config/zsh/functions.zsh
+!/.config/zsh/.zshrc
+!/.config/zsh/.zprofile
+!/.config/zsh/.zlogout
 
 # }}}
 
@@ -80,6 +94,7 @@
 !/.local/bin/internet-search
 !/.local/bin/libsh
 !/.local/bin/myenv
+!/.local/bin/qute-open
 !/.local/bin/ramstate
 !/.local/bin/safe-poweroff
 !/.local/bin/unmount-drive

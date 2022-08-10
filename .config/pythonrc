@@ -1,0 +1,31 @@
+#!/usr/bin/python3
+
+# python config for interactive shell
+# the location of this file is defined in $PYTHONSTARTUP
+
+import atexit
+import math
+import os
+import readline
+import sys
+
+
+# history file handling {{{
+history = os.path.join(os.path.expanduser('~'), '.cache/python_history')
+try:
+    readline.read_history_file(history)
+except OSError:
+    pass
+
+def write_history():
+    try:
+        readline.write_history_file(history)
+    except OSError:
+        pass
+
+atexit.register(write_history)
+# }}}
+
+print("Welcome to the Python Shell!")
+print("Available libraries: math, os, sys")
+
