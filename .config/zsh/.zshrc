@@ -19,7 +19,8 @@ source "$ZDOTDIR/bookmarks.zsh"
 source "$ZDOTDIR/functions.zsh"
 source "$ZDOTDIR/cursor-prompt.zsh"
 
-[ -f "$XDG_CONFIG_HOME/sh/colors.sh" ] && source "$XDG_CONFIG_HOME/colors.sh"
+[ -f "$XDG_CONFIG_HOME/sh/colors.sh" ] && source "$XDG_CONFIG_HOME/sh/colors.sh"
+[ -f "$XDG_CONFIG_HOME/sh/machine.sh" ] && source "$XDG_CONFIG_HOME/sh/machine.sh"
 # }}}
 
 # history configuration {{{

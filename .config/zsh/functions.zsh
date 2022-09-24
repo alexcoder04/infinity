@@ -25,6 +25,7 @@ show_image_url(){
   tempfile="${TMPDIR:-/tmp}/${1##*/}"
   wget -O "$tempfile" "$1" \
     && nsxiv "$tempfile" & disown
+  unset tempfile
 }
 # }}}
 
@@ -43,9 +44,10 @@ remember(){
 
 # search history {{{
 hist(){
-  selected="$(tac "$HISTFILE" | prompt "zsh" | tr "\n" " ")"
+  selected="$(tac "$HISTFILE" | prompt "zsh: " | tr "\n" " ")"
   [ -z "$selected" ] && return
   echo -n "$selected" | clipboard_copy
+  unset selected
 }
 # }}}
 
@@ -72,6 +74,8 @@ lfcd(){
   dir="$(cat "$tmp")"
   rm -f "$tmp"
   [ -d "$dir" ] && cd "$dir"
+  unset tmp
+  unset dir
 }
 
 fzfcd(){
@@ -80,6 +84,8 @@ fzfcd(){
   # maybe it's like $XDG_CONFIG_HOME
   dir="$(eval "echo $dest")"
   [ -d "$dir" ] && cd "$dir"
+  unset dest
+  unset dir
 }
 # }}}
 

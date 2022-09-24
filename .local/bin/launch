@@ -1,0 +1,108 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# launch a command inside a terminal window / launch preferred terminal
+# usage: `launch <options> command args...`
+
+# preffered ones are at the start
+terminals="alacritty qterminal xfce-terminal gnome-terminal xterm"
+
+. libsh || exit 1
+
+# check installed terminals and get the preffered one to start {{{
+get_terminal(){
+  # prefer foot on wayland
+  if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    # check if installed
+    if command -v "foot" >/dev/null; then
+      # check if server running and start it if not
+      if ! pgrep -f "foot --server|foot -s" >/dev/null; then
+        foot --server >>"${TMPDIR:-/tmp}/footserver.log" 2>&1 &
+        sleep 0.1 # wait so server can start up
+      fi
+      printf '%s' "footclient"
+      return
+    fi
+  fi
+  # check which terminals are installed
+  for program in $terminals; do
+    if command -v "$program" >/dev/null; then
+      printf '%s' "$program"
+      return
+    fi
+  done
+  die_notify "cannot find your terminal"
+}
+# }}}
+
+# terminal-specific args for certain features {{{
+get_float_arg(){
+  case "$your_terminal" in
+    *alacritty) printf '%s' "--class i3_float,i3_float" ;;
+    *foot*) printf '%s' "--app-id=i3_float" ;;
+  esac
+}
+
+get_dropdown_arg(){
+  case "$your_terminal" in
+    *alacritty) printf '%s' "--class dropdown,dropdown" ;;
+    *foot*) printf '%s' "--app-id=dropdown" ;;
+  esac
+}
+
+get_launcher_arg(){
+  case "$your_terminal" in
+    *alacritty) printf '%s' "--class launcher,launcher" ;;
+    *foot*) printf '%s' "--app-id=launcher" ;;
+  esac
+}
+
+get_hold_arg(){
+  case "$your_terminal" in
+    *alacritty | *foot*) printf '%s' "--hold" ;;
+  esac
+}
+
+get_exec_arg(){
+  case "$your_terminal" in
+    *alacritty) printf '%s' "-e" ;;
+    *foot*) return ;;
+  esac
+}
+# }}}
+
+# parse args {{{
+OPTIND=1
+
+your_terminal="$(get_terminal)" # this is NOT useless, we need this in funtions
+exec_string="$your_terminal"
+
+while getopts "dfhle" opt; do
+  case "$opt" in
+    d)
+      # if dropdown is already running, don't start it again
+      exec_string="$exec_string $(get_dropdown_arg)"
+      pgrep -f "$exec_string" >/dev/null 2>&1 && exit 0
+      ;;
+    f) exec_string="$exec_string $(get_float_arg)" ;;
+    h) exec_string="$exec_string $(get_hold_arg)" ;;
+    l) exec_string="$exec_string $(get_launcher_arg)" ;;
+  esac
+done
+
+shift $((OPTIND-1))
+[ "$1" = "--" ] && shift
+
+[ -z "$1" ] && set "$SHELL"
+# }}}
+
+exec_string="$exec_string $(get_exec_arg)"
+echo "$exec_string"
+exec $exec_string "$@"
+
