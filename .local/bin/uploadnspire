@@ -1,0 +1,30 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# uploading a file to a ti-nspire calculator using fuse-nspire
+# I mount and unmount the filesystem immediatly because sometimes it hangs
+# if it runs for a longer time
+# ! run as root
+
+. libsh || exit 1
+
+MOUNTPOINT="/media/nspire"
+FUSE_NSPIRE="/home/alex/Repos/fuse-nspire/nspire"
+
+if grep -Eq "^nspire $MOUNTPOINT fuse.nspire " /proc/mounts; then
+  umount -v "$MOUNTPOINT" \
+    || die "$MOUNTPOINT was already mounted and cannot be unmounted"
+fi
+
+echo "mounting..."
+"$FUSE_NSPIRE" "$MOUNTPOINT" \
+  && cp -v "$1" "$MOUNTPOINT/" \
+  && umount -v "$MOUNTPOINT" \
+  || die "an error occured"
+

@@ -1,0 +1,44 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+#                                                          
+# volume control module for i3blocks/kherson
+
+case "$BLOCK_BUTTON" in
+  1) pactl set-sink-mute @DEFAULT_SINK@ toggle ;;
+  4) pactl set-sink-volume @DEFAULT_SINK@ +5% ;;
+  5) pactl set-sink-volume @DEFAULT_SINK@ -5% ;;
+  3) pavucontrol & ;;
+  *) ;;
+esac
+
+miccheck(){
+  pactl get-source-mute @DEFAULT_SOURCE@ | grep -q yes \
+    && printf '%s' " "
+}
+
+if pactl get-sink-mute @DEFAULT_SINK@ | grep -q yes; then
+  data=" $(miccheck)"
+  echo "$data"
+  echo "$data"
+  echo "${COLOR_GREY:-#666666}"
+  echo "${COLOR_BLACK:-#000000}"
+else
+  value="$(pactl get-sink-volume @DEFAULT_SINK@ | awk '/^Volume:/{ print $5 }')"
+  if [ "$(echo "$value" | tr -d "%")" -gt 100 ]; then
+    color="${COLOR_RED:-#ff0000}"
+  else
+    color="${COLOR_MAGENTA:-#aa3333}"
+  fi
+
+  echo " ${value}$(miccheck)"
+  echo " ${value}$(miccheck)"
+  echo "$color"
+  echo "${COLOR_BLACK:-#000000}"
+fi
+

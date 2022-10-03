@@ -1,0 +1,39 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# a prompt to select password and copy it to the clipboard
+# info: i save all otp keys under a name starting with underscore
+
+PASS_DIR="${PASSWORD_STORE_DIR:-$HOME/.local/share/pass}"
+[ -d "$PASS_DIR" ] || exit 1
+
+. libsh || exit 1
+
+get_all_pass_entries(){
+  /bin/ls "$PASS_DIR" | rev | cut -d"." -f2- | rev
+}
+
+get_password(){
+  selected="$(get_all_pass_entries | grep -vE '^_.*' | prompt_gui "pass")"
+  [ -z "$selected" ] && exit 0
+  pass show -c "$selected" | xargs -I{} notify-send "pass" "{}"
+}
+
+get_otp(){
+  selected="$(get_all_pass_entries | grep -E '^_.*' | prompt_gui "otp")"
+  [ -z "$selected" ] && exit 0
+  pass otp -c "$selected" | xargs -I{} notify-send "otp" "{}"
+}
+
+case "$1" in
+  otp|--otp) get_otp ;;
+  *)         get_password ;;
+esac
+
+

@@ -88,17 +88,27 @@
 !/.local/bin/bitcoinprice
 !/.local/bin/cpustat
 !/.local/bin/diskspacecheck
+!/.local/bin/droidscreen
 !/.local/bin/emoji-select
+!/.local/bin/ffmpeg-timelapse
+!/.local/bin/get_desktop
 !/.local/bin/i3-battery
+!/.local/bin/i3-internet
 !/.local/bin/i3-temp
+!/.local/bin/i3-volume
 !/.local/bin/internet-search
+!/.local/bin/launch
 !/.local/bin/libsh
 !/.local/bin/myenv
+!/.local/bin/pwmgr
 !/.local/bin/qute-open
 !/.local/bin/ramstate
 !/.local/bin/safe-poweroff
+!/.local/bin/screenshot
 !/.local/bin/unmount-drive
 !/.local/bin/update-checker
+!/.local/bin/uploadnspire
+!/.local/bin/wallpaper-select
 !/.local/bin/wifi-toggle
 !/.local/bin/wm-do
 

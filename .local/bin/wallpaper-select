@@ -1,0 +1,79 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# set a wallpaper universally with some cute features
+
+# command to use on plain Xorg
+x11bg(){
+  feh --no-fehbg --bg-fill "$1" "$2"
+}
+
+# command to use on wayland
+waylandbg(){
+  swaymsg output HDMI-A-1 bg "$1" stretch
+  swaymsg output DP-1 bg "$1" stretch
+  swaymsg output eDP-1 bg "$2" stretch
+}
+
+# maybe I set a specific folder for now
+[ -e "/tmp/wpdirs" ] \
+  && wallpapersdir="$(cat "/tmp/wpdirs")" \
+  && return
+# else: just use default wallpapers
+wallpapersdir="$XDG_DATA_HOME/backgrounds/"
+
+get_random_wallpaper(){
+  # this file disables random wallpapers
+  [ -e "/tmp/wpr-disable" ] && exit 0
+  find "$wallpapersdir" -type f,l | shuf -n 1
+}
+
+get_wallpaper(){
+  case "$1" in
+    # get random one
+    random | --random | -r)
+      get_random_wallpaper ;;
+    # set specific
+    set | --set | -s)
+      case "$2" in
+        /*) echo "$2" ;;
+        *) echo "$(pwd)/$2" ;;
+      esac ;;
+    # select with nsxiv
+    *)
+      echo "$pwd/$(find "$wallpapersdir" -type f,l | shuf | nsxiv -q -o -t -r - | head -n 1)" ;;
+  esac
+}
+
+case "$(get_desktop)" in
+  i3 | bspwm | qtile)
+    if \
+      xrandr | grep "^HDMI-1 connected" | grep -q "mm x " \
+        && xrandr | grep "^eDP-1 connected" | grep -q "mm x "
+    then
+      monitor1="$(get_wallpaper "$@")"
+      monitor2="$(get_wallpaper "$@")" 
+      x11bg "$monitor1" "$monitor2"
+    else
+      monitor1="$(get_wallpaper "$@")"
+      x11bg "$monitor1"
+    fi
+    ;;
+  cinnamon)
+    gsettings set org.cinnamon.desktop.background picture-uri "file://$(get_wallpaper "$@")"
+    ;;
+  sway)
+    monitor1="$(get_wallpaper "$@")"
+    monitor2="$(get_wallpaper "$@")"
+    waylandbg "$monitor1" "$monitor2"
+    ;;
+  *)
+    echo "ERROR: your desktop/wm is not supported yet!"; exit 1 ;;
+esac
+

@@ -1,0 +1,33 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# get the name of the current desktop/window manager
+
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+  pgrep -x sway >/dev/null  &&  printf '%s' "sway" && exit 0
+  exit 1
+fi
+
+if [ -z "$XDG_CURRENT_DESKTOP" ]; then
+  pgrep -x bspwm >/dev/null &&  printf '%s' "bspwm" && exit 0
+  pgrep -x i3 >/dev/null    &&  printf '%s' "i3"    && exit 0
+  pgrep -x qtile >/dev/null &&  printf '%s' "qtile" && exit 0
+  pgrep -x sway >/dev/null  &&  printf '%s' "sway"  && exit 0
+  exit 1
+fi
+
+case "$XDG_CURRENT_DESKTOP" in
+  X-Cinnamon)                   printf '%s' "cinnamon" && exit 0 ;;
+  bspwm)                        printf '%s' "bspwm"    && exit 0 ;;
+  i3)                           printf '%s' "i3"       && exit 0 ;;
+  qtile)                        printf '%s' "qtile"    && exit 0 ;;
+  sway)                         printf '%s' "sway"     && exit 0 ;;
+  *)                            printf '%s' "$XDG_CURRENT_DESKTOP" && exit 0 ;;
+esac
+

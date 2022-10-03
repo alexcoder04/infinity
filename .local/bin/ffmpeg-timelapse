@@ -1,0 +1,75 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# timelapse effect on video(s) with ffmpeg
+
+. libsh || exit 1
+
+FILES_LIST_TEMP="${TMPDIR:-/tmp}/ffmpeg-timelapse-files"
+RECORD="$(date +%y%m%d-%H%M)"
+EXT="mkv"
+OUT_FILE="$HOME/Temp/timelapse-$RECORD.$EXT"
+SPEED="0.1"
+
+print_help(){
+  cat <<EOF
+ffmpeg-speedup - change video speed with ffmpeg
+arguments:
+ -h:            print this help
+ -s <speed>:    specify speed
+ -o <file>:     specify output file
+EOF
+}
+
+OPTIND=1
+
+while getopts "hs:o:" opt; do
+  case "$opt" in
+    h) print_help; exit 0 ;;
+    s) SPEED="$OPTARG" ;;
+    o) OUT_FILE="$OPTARG" ;;
+  esac
+done
+
+shift $((OPTIND-1))
+[ "$1" = "--" ] && shift
+
+[ -z "$1" ] && die_gui "No input files specified"
+
+case "$1" in
+  *.txt)
+    ffmpeg_args="-safe 0 -f concat -i $1"
+    echo "Reading files from $1..."
+    ;;
+  *)
+    if [ "$#" -gt 1 ]; then
+      printf '%s' "" >"$FILES_LIST_TEMP"
+      for file in $@; do
+        echo "file $(pwd)/$file" >>"$FILES_LIST_TEMP"
+      done
+      ffmpeg_args="-safe 0 -f concat -i $FILES_LIST_TEMP"
+      echo "Merging files: $@..."
+    else
+      ffmpeg_args="-i file:$1"
+      echo "Input file: $1..."
+    fi
+    ;;
+esac
+
+echo "ffmpeg args: $ffmpeg_args"
+ffmpeg -hide_banner \
+  $ffmpeg_args \
+  -filter:v "setpts=${SPEED}*PTS" \
+  -framerate 30 \
+  "$OUT_FILE"
+  
+[ -f "$FILES_LIST_TEMP" ] && rm -v "$FILES_LIST_TEMP"
+
+exit 0
+

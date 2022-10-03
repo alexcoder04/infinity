@@ -1,0 +1,36 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# take a screenshot on x11 or wayland
+
+. libsh || exit 1
+
+[ -d "$HOME/Temp" ] \
+  && tempfolder="$HOME/Temp" \
+  || tempfolder="${TMPDIR:-/tmp}"
+filename="$tempfolder/scrot-$(date +%Y.%m.%d-%H:%M:%S).png"
+
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+  cmd='grim'
+  cmd_select='grim -g "$(slurp)"'
+else
+  cmd='scrot'
+  cmd_select='scrot -s'
+fi
+
+case "$1" in
+  select | --select | -s )
+    lp_inform_gui "select part of the screen you want to capture"
+    eval "$cmd_select \"$filename\"" \
+      && inform_gui "saved screenshot to $filename" ;;
+  *)
+    eval "$cmd \"$filename\"" \
+      && inform_gui "saved screenshot to $filename" ;;
+esac
+

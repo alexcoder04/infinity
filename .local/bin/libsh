@@ -11,7 +11,7 @@
 
 # VARIABLES {{{
 closemsg="ready. you can close this window now"
-_fzf_opts="--no-info --cycle --print-query --margin=1,2 --color=bg+:$COLOR_DARK_GREY"
+_fzf_opts="--no-info --cycle --margin=1,2 --color=bg+:$COLOR_DARK_GREY"
 # }}}
 
 # INTERNAL functions {{{
@@ -82,24 +82,28 @@ prompt(){
   FZF_DEFAULT_OPTS="$_fzf_opts" fzf --prompt="${1:-  }" </dev/stdin | grep -v "^$"
 }
 
+# TODO think about best GUI prompt
 prompt_gui(){
-  if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
-    prompt </dev/stdin
-    return
-  fi
-
-  TEMPFILE="$(mktemp)"
-  FZFPIPE=$(mktemp -u)
-  mkfifo "$FZFPIPE"
-  trap 'rm -f "$FZFPIPE" "$TEMPFILE" >/dev/null' EXIT INT
-
-  launch -l \
-    sh -c "exec fzf $_fzf_opts --prompt=\"${1:-  }\" <$FZFPIPE >$TEMPFILE" \
-    >/dev/null 2>&1 &
-  cat /dev/stdin >"$FZFPIPE"
-  wait
-  grep -vE "^$" "$TEMPFILE"
+  rofi -dmenu -i -p "${1:-prompt}"
 }
+#prompt_gui(){
+#  if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
+#    prompt </dev/stdin
+#    return
+#  fi
+#
+#  TEMPFILE="$(mktemp)"
+#  FZFPIPE=$(mktemp -u)
+#  mkfifo "$FZFPIPE"
+#  trap 'rm -f "$FZFPIPE" "$TEMPFILE" >/dev/null' EXIT INT
+#
+#  launch -l \
+#    sh -c "exec fzf $_fzf_opts --prompt=\"${1:-  }\" <$FZFPIPE >$TEMPFILE" \
+#    >/dev/null 2>&1 &
+#  cat /dev/stdin >"$FZFPIPE"
+#  wait
+#  grep -vE "^$" "$TEMPFILE"
+#}
 # }}}
 
 # FILES {{{
