@@ -1,0 +1,48 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# copy a photo from android phone
+
+MOUNTPOINT="$HOME/Temp/Phone"
+
+. libsh || exit 1
+
+quit(){
+  echo "$1"
+  inform_gui "getphoto: Quit" "$1"
+  exit 0
+}
+
+[ -d "$MOUNTPOINT" ] \
+  || mkdir -vp "$MOUNTPOINT" \
+  || die_gui "Cannot create mountpoint"
+
+simple-mtpfs -l >/dev/null \
+  || die_gui "No devices found"
+
+if [ -d "$MOUNTPOINT/DCIM/Camera" ]; then
+  echo "Source folder exists, skipping mount..."
+else
+  simple-mtpfs "$MOUNTPOINT" \
+    || die_gui "Mount failed"
+fi
+
+[ -d "$MOUNTPOINT/DCIM/Camera" ] \
+  || die_gui "Source folder not found"
+
+destin_folder="$(find . -maxdepth 3 -type d | grep -vE '^\.\/\.' | prompt_gui "To folder")"
+[ -z "$destin_folder" ] && quit "no folder selected"
+
+inform_gui "Loading photos..."
+find "$MOUNTPOINT/DCIM/Camera" -type f \
+    | shuf \
+    | nsxiv -q -o -t -r - \
+    | xargs -I{} cp -v "{}" "$destin_folder/$(basename "${f%.*}")" \
+    && inform_gui "getphoto" "copying files finished"
+
