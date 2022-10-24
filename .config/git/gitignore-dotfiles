@@ -24,6 +24,9 @@
 # htop
 !/.config/htop
 
+# lf
+!/.config/lf
+
 # libinput-gestures
 !/.config/libinput-gestures.conf
 

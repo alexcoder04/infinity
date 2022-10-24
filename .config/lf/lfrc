@@ -1,0 +1,354 @@
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+#
+# lf (terminal file manager) config
+
+# BASIC {{{
+# settings {{{
+set dircounts
+set drawbox 
+set preview 
+set icons 
+set ignorecase 
+set info size
+set incsearch
+set incfilter
+
+set shell /bin/sh
+set shellopts '-eu'
+set ifs "\n"
+
+set promptfmt "\033[34m[ \033[32;1m%u\033[0;31m@\033[33m%h \033[34m]\033[0m in \033[4;36;1m%d\033[0;1;35m%f \033[0m"
+set scrolloff 5
+set truncatechar "…"
+
+# }}}
+
+# previews {{{
+set previewer ~/.config/lf/previewer.sh
+set cleaner ~/.config/lf/clear.sh
+# }}}
+
+# commands {{{
+cmd set-columns ${{
+  w=$(tput cols)
+  if [ $w -le 100 ]; then
+    lf -remote "send $id set ratios 1:2"
+  else
+    lf -remote "send $id set ratios 1:2:3"
+  fi
+}}
+
+cmd reload-window :{{
+  unselect
+  clear
+  set-columns
+  reload
+  set dircounts
+}}
+
+cmd select-all %{{
+  /bin/ls | xargs -I{} lf -remote "send $id toggle {}"
+}}
+
+cmd chmodx %{{
+  chmod +x "$f"
+  lf -remote 'send reload'
+}}
+
+cmd unchmodx %{{
+  chmod 600 "$f"
+  lf -remote 'send reload'
+}}
+
+cmd copy-path %{{
+  . libsh \
+    || (echo "\033[31mFailed to source libsh\033[0m"; exit 1)
+  printf '%s' "$f" | clipboard_copy \
+    && (echo "\033[32m$f\033[0m copied to clipboard"; exit 0)
+}}
+
+cmd q :quit
+
+cmd zen-enable :set hiddenfiles ".*:!.local:!.config:Makefile:README*:LICENSE*:*.1:go.mod:go.sum:__pycache__:node_modules:package*.json:Procfile:Dockerfile"
+cmd zen-disable :set hiddenfiles ".*:!.local:!.config:!.gitignore:__pycache__:node_modules"
+
+# }}}
+# }}}
+
+# OPEN {{{
+# adapted from <https://github.com/LukeSmithxyz/voidrice/blob/master/.config/lf/lfrc>
+cmd open ${{
+  extract_tar(){
+    archive_id="$(echo "$f" | md5sum | cut -d" " -f1)"
+    extract_tmp="${TMPDIR:-/tmp}/archive-preview/$archive_id"
+    archive_hash="$(md5sum "$f" | cut -d" " -f1)"
+    if [ ! -d "$extract_tmp" ]; then
+      mkdir -p "$extract_tmp"
+      tar "$1" "$f" -C "$extract_tmp"
+      printf "$archive_hash" >"$extract_tmp.md5sum"
+    fi
+    if [ ! "$archive_hash" = "$(cat "$extract_tmp.md5sum")" ]; then
+      rm -rf "$extract_tmp" "$extract_tmp.md5sum"
+      mkdir -p "$extract_tmp"
+      tar "$1" "$f" -C "$extract_tmp"
+      printf "$archive_hash" >"$extract_tmp.md5sum"
+    fi
+    setsid -f launch lf "$extract_tmp"
+  }
+
+  case "$(file --mime-type -b "$f")" in
+    */pdf | application/epub* | *djvu )
+      setsid -f zathura "$f" >/dev/null 2>&1 ;;
+    image/*)
+      setsid -f nsxiv -a $fx ;;
+    audio/*)
+      mpv --audio-display=no $fx ;;
+    video/*)
+      setsid -f mpv "$f" -quiet >/dev/null 2>&1 ;;
+    text/* | application/json | message/rfc822)
+      nvim -c 'nnoremap H :q<CR>' "$f" ;;
+    application/gzip)
+      extract_tar "-xzf" ;;
+    application/x-bzip2)
+      extract_tar "-xjf" ;;
+    application/zip)
+      case "$f" in
+        *.epub)
+          setsid -f zathura "$f" >/dev/null 2>&1 ;;
+        *)
+          archive_id="$(echo "$f" | md5sum | cut -d" " -f1)"
+          extract_tmp="${TMPDIR:-/tmp}/archive-preview/$(echo "$f" | md5sum | cut -d" " -f1)"
+          archive_hash="$(md5sum "$f" | cut -d" " -f1)"
+          if [ ! -d "$extract_tmp" ]; then
+            mkdir -p "$extract_tmp"
+            unzip "$f" -d "$extract_tmp"
+            printf "$archive_hash" >"$extract_tmp.md5sum"
+          fi
+          if [ ! "$archive_hash" = "$(cat "$extract_tmp.md5sum")" ]; then
+            rm -rf "$extract_tmp" "$extract_tmp.md5sum"
+            mkdir -p "$extract_tmp"
+            unzip "$f" -d "$extract_tmp"
+            printf "$archive_hash" >"$extract_tmp.md5sum"
+          fi
+          setsid -f launch lf "$extract_tmp" >/dev/null 2>&1 ;;
+      esac ;;
+    *opendocument*)
+      setsid -f libreoffice "$f" >/dev/null 2>&1 ;;
+    *)
+      [ -s "$f" ] \
+        && setsid -f xdg-open "$f" >/dev/null 2>&1 \
+        || nvim -c 'nnoremap H :q<CR>' "$f" ;;
+  esac
+}}
+# }}}
+
+# ARCHIVES {{{
+# extract function {{{
+# from: <https://gitlab.com/dwt1/dotfiles/-/blob/master/.bashrc#L80>
+cmd unarchive !{{
+  case "$f" in
+    *.7z)                 7z x "$f"      ;;
+    *.Z)                  uncompress "$f";;
+    *.bz2)                bunzip2 "$f"   ;;
+    *.gz)                 gunzip "$f"    ;;
+    *.rar)                unrar x "$f"   ;;
+    *.tar)                tar xf "$f"    ;;
+    *.tar.bz2)            tar xjf "$f"   ;;
+    *.tar.gz)             tar xzf "$f"   ;;
+    *.tar.xz)             tar xf "$f"    ;;
+    *.tar.zst)            unzstd "$f"    ;;
+    *.tbz2)               tar xjf "$f"   ;;
+    *.tgz)                tar xzf "$f"   ;;
+    *.zip|*.apk|*.lcpkg)  unzip "$f"     ;;
+    *) echo "Unsupported format" ;;
+  esac
+}}
+# }}}
+
+# archive functions {{{
+cmd archive-tar !{{
+  echo "$fx" | xargs -n 1 basename | xargs -t tar -vcf "$f.tar"
+}}
+
+cmd archive-tar-gz !{{
+  echo "$fx" | xargs -n 1 basename | xargs -t tar -vczf "$f.tar.gz"
+}}
+
+cmd archive-tar-bz !{{
+  echo "$fx" | xargs -n 1 basename | xargs -t tar -vcjf "$f.tar.bz2"
+}}
+
+cmd archive-zip !{{
+  echo "$fx" | xargs -n 1 basename | xargs -t zip -r "$f.zip"
+}}
+# }}}
+# }}}
+
+# MV RM {{{
+cmd normalize-name %{{
+  mv "$f" "$(basename "$f" | sed 's/\s/_/g')"
+}}
+
+cmd new-name %{{
+  set -f
+  printf "\033[32mNew name:\033[0m "
+  read newname
+  mv "$f" "$newname"
+}}
+
+# from: https://github.com/gokcehan/lf/wiki/Tips#bulk-rename-multiple-files
+cmd bulk-rename ${{
+  old="$(mktemp)"
+  new="$(mktemp)"
+  [ -z "$fs" ] && fs="$(ls)"
+  printf '%s\n' "$fs" >"$old"
+  printf '%s\n' "$fs" >"$new"
+  $EDITOR "$new"
+  [ "$(wc -l <"$new")" -ne "$(wc -l <"$old")" ] && exit
+  paste "$old" "$new" | while IFS= read -r names; do
+    src="$(printf '%s' "$names" | cut -f1)"
+    dst="$(printf '%s' "$names" | cut -f2)"
+    if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
+      continue
+    fi
+    mv -- "$src" "$dst"
+  done
+  rm -- "$old" "$new"
+  lf -remote "send $id unselect"
+}}
+# }}}
+
+# CREATE {{{
+cmd folder-with-items %{{
+    set -f
+    printf "\033[32mFolder name:\033[0m "
+    read newd
+    mkdir "$newd"
+    mv $fx "$newd"
+}}
+# }}}
+
+# STAT {{{
+cmd sizeof %{{
+  printf "\033[33mSize: \033[0m"
+  du --max-depth 0 -h "$f" 2>/dev/null | cut -f1
+}}
+
+cmd git_pull !{{
+  printf "\033[34mgit:\033[0m"
+  for i in $(seq 1 $(($(tput cols)-4))); do printf "-"; done
+  git pull --rebase || true
+}}
+
+cmd git_status ${{
+  printf "\033[34mgit:\033[0m"
+  for i in $(seq 1 $(($(tput cols)-4))); do printf "-"; done
+  git status || true; echo "press ENTER to exit or s<enter> to enter a shell"; read inp
+  [ "$inp" = "s" ] && $SHELL || exit 0
+}}
+# }}}
+
+# KEYBINDS {{{
+# basic {{{
+# Remove default mappings
+map a
+map c
+map d
+map e
+map i
+map m
+map p
+map r
+map w
+map y
+
+# move
+map J :push hjl
+map K :push hkl
+
+# actions
+map <c-a> select-all
+map U clear
+map yy copy
+map yp copy-path
+map cc cut
+map p :paste; clear
+map x chmodx
+map X unchmodx
+map <c-l> reload-window
+map H set hidden!
+map ( filter
+map ) setfilter ""
+map zz zen-enable
+map ZZ zen-disable
+
+# wallpaper
+map wpa %cp -v "$f" "$XDG_DATA_HOME/backgrounds/my-wallpapers/"
+map wps %wallpaper-select --set "$f"
+
+# }}}
+
+# archive {{{
+map ae unarchive
+map act archive-tar
+map acg archive-tar-gz
+map acb archive-tar-bz
+map acz archive-zip
+# }}}
+
+# "view in" {{{
+map T $$SHELL
+map <c-t> push !
+map e $nvim -c 'nnoremap H :q<CR>' "$f"
+map b &setsid nsxiv -q -t -r "$f"
+# }}}
+
+# mv-rm {{{
+# rename
+map _ normalize-name
+map rr rename
+map rR push rr<a-b><a-b><a-f>
+map RR new-name
+map <c-r> bulk-rename
+
+# delete
+map dd %trash-put $fx
+map DD %rm -i $fx
+map dD %{{
+  printf "\033[33mDel \"$(basename "$f")\" - Sure [Y/n]?\033[0m "
+  read ans
+  [ "$ans" = "Y" ] \
+    && rm -rf $fx \
+    || echo "\033[31mAborted\033[0m"
+}}
+# }}}
+
+# create {{{
+map md push %mkdir<space>
+map mD folder-with-items
+map mf push %touch<space>
+map mF push $$EDITOR<space>
+map ml push $ln<space>-s<space>
+# }}}
+
+# stat {{{
+map i :set nodircounts; calcdirsize
+map I sizeof
+
+map gpl git_pull
+map gst git_status
+map gdf !git diff
+# }}}
+# }}}
+
+# STARTUP {{{
+set-columns
+zen-disable
+# }}}
+
