@@ -1,0 +1,63 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# record screen on X11 and wayland
+
+PID_FILE="${TMPDIR:-/tmp}/scrcord.pid"
+RECORD="$(date +%Y.%m.%d-%H:%M:%S)"
+RESOLUTION="${SCRCORD_RESOLUTION:-1920x1080}"
+
+. libsh || exit 1
+
+if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
+  die_gui "Could not find X11/wayland display"
+fi
+
+start_recording_x11(){
+  ffmpeg \
+    -f x11grab -i "$DISPLAY" -s "$RESOLUTION" \
+    -preset ultrafast \
+    "$HOME/Temp/scrcord-$RECORD.mkv" \
+    >"${TMPDIR:-/tmp}/scrcord-$RECORD.log" 2>&1 &
+
+  echo "$!" >"$PID_FILE"
+  chmod 400 "$PID_FILE"
+}
+
+start_recording_wayland(){
+  wf-recorder -f "$HOME/Temp/scrcord-$RECORD.mkv" \
+    >"${TMPDIR:-/tmp}/scrcord-$RECORD.log" 2>&1 &
+
+  echo "$!" >"$PID_FILE"
+  chmod 400 "$PID_FILE"
+}
+
+case "$1" in
+  start)
+    [ -f "$PID_FILE" ] && die_gui "Screen record already running"
+    touch "$PID_FILE"
+    lp_inform_gui "Starting screen record..."
+    sleep 1
+    if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+      start_recording_wayland
+    else
+      start_recording_x11
+    fi
+    pkill -SIGRTMIN+3 "i3blocks|kherson"
+    ;;
+  stop)
+    [ -f "$PID_FILE" ] || die_gui "Screen record seems not to be running"
+    kill -TERM "$(cat "$PID_FILE")" || die_gui "Cannot kill recorder process"
+    rm -f "$PID_FILE"
+    pkill -SIGRTMIN+3 "i3blocks|scrcord"
+    lp_inform_gui "Screen record stopped"
+    ;;
+  *) die_gui "Invalid argument" ;;
+esac
+

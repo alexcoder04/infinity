@@ -1,0 +1,41 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# a script that plays/stops music
+
+MUSIC_DIR="$HOME/PicVidMus/Music/Player"
+SOCKET="${TMPDIR:-/tmp}/mpv-music-player.sock"
+
+. libsh || exit 1
+
+play(){
+  selected="$(/bin/ls "$MUSIC_DIR" | prompt_gui "music")"
+  [ -z "$selected" ] && exit 0
+  case "$(file -b --mime-type "$MUSIC_DIR/$selected")" in
+    audio/*) file="$MUSIC_DIR/$selected" ;;
+    text/*) file="$(cat "$MUSIC_DIR/$selected")" ;;
+    *) exit 1 ;;
+  esac
+  inform_gui "playing $file"
+  mpv \
+    --loop-file=yes --input-ipc-server="$SOCKET" --no-terminal --no-video \
+    "$file" \
+    >/dev/null 2>&1 &
+}
+
+stop_playing(){
+  inform_gui "stopping music player"
+  echo '{"command": ["quit"]}' | socat - "$SOCKET" && rm "$SOCKET"
+}
+
+case "$1" in
+  stop|--stop) stop_playing ;;
+  *) play ;;
+esac
+

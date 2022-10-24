@@ -1,0 +1,25 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# indicate whether the screen is currently recorded
+
+PID_FILE="${TMPDIR:-/tmp}/scrcord.pid"
+INDICATOR="  <span foreground='${COLOR_RED:-#ff0000}'></span>"
+
+[ -f "$PID_FILE" ] || exit 0
+
+case "$BLOCK_BUTTON" in
+  1) scrcord stop && exit 0 ;;
+esac
+
+echo "$INDICATOR"
+echo "$INDICATOR"
+echo "${COLOR_WHITE:-#ffffff}"
+echo "${COLOR_BLACK:-#000000}"
+

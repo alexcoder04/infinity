@@ -1,0 +1,120 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# set monitor configuration
+# ! works only with my setup (eDP, DP and HDMI monitors)
+
+SETTING_FILE="${TMPDIR:-/tmp}/monitors.setting"
+MODES="dual-hdmi\nlaptop\nonly-hdmi\nmirror-hdmi\nonly-dp\ndual-dp\nmirror-dp\n"
+BRIGHTNESS_STANDALONE="15000"
+BRIGHTNESS_DUAL="7000"
+SECOND_MONITOR_POSITION="${SECOND_MONITOR_POSITION:-right}"
+
+. libsh || exit 1
+
+# get mode (auto/args) {{{
+# get mode automatically if no argument passed
+if [ -z "$1" ]; then
+  # check settings file
+  if [ -f "$SETTING_FILE" ]; then
+    MODE="$(cat "$SETTING_FILE")"
+  # we don't know which mode to use
+  else
+    die_gui "no monitor mode passed"
+  fi
+# parse argument
+else
+  case "$1" in
+    # select the mode with a prompt
+    -i | --interactive | i | interactive)
+      MODE="$(printf "$MODES" | prompt_gui "monitor")"
+      [ -z "$MODE" ] && exit 0 ;;
+    # assume the argument is the mode
+    *)
+      MODE="$(printf '%s' "$1")" ;;
+  esac
+fi
+# }}}
+
+# screen_set() {{{
+screen_set(){
+  if [ -z "$1" ] || [ -z "$2" ]; then
+    die_gui "missing argument to screen_set"
+  fi
+  # wayland
+  if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    [ "$1" = "HDMI-1" ] && monitor="HDMI-A-1" || monitor="$1"
+    case "$2" in
+      enable | disable) ;;
+      *) die_gui "invalid argument passed to screen_set" ;;
+    esac
+    swaymsg output "$monitor" "$2" &
+    return
+  fi
+  # X11
+  case "$2" in
+    enable) arg="--auto" ;;
+    disable) arg="--off" ;;
+    *) die_gui "invalid argument passed to screen_set" ;;
+  esac
+  xrandr --output "$1" "$arg"
+}
+# }}}
+
+# laptop screen {{{
+case "$MODE" in
+  dual* | mirror-*)
+    screen_set "eDP-1" enable
+    swaymsg output "eDP-1" pos 0 0 res 1920x1080 ;;
+  laptop) screen_set "eDP-1" enable ;;
+  only*) screen_set "eDP-1" disable ;;
+esac
+# }}}
+
+# hdmi monitor {{{
+case "$MODE" in
+  *hdmi)
+    screen_set "HDMI-1" enable
+    if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+      swaymsg output "HDMI-A-1" pos 1920 0 res 1920x1080
+    else
+      case "$MODE" in
+        dual-*) xrandr --output "HDMI-1" "--${SECOND_MONITOR_POSITION}-of" "eDP-1" ;;
+        mirror-*) xrandr --output "HDMI-1" --same-as "eDP-1" ;;
+      esac
+    fi ;;
+  *) screen_set "HDMI-1" disable ;;
+esac
+# }}}
+
+# dp monitor {{{
+case "$MODE" in
+  *dp)
+    screen_set "DP-1" enable
+    if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+      swaymsg output "DP-1" pos 1920 0 res 1920x1080
+    else
+      case "$MODE" in
+        dual-*) xrandr --output "DP-1" "--${SECOND_MONITOR_POSITION}-of" "eDP-1" ;;
+        mirror-*) xrandr --output "DP-1" --same-as "eDP-1" ;;
+      esac
+    fi ;;
+  *) screen_set "DP-1" disable ;;
+esac
+# }}}
+
+# brightness
+case "$MODE" in
+  dual-* | mirror-*) doas /usr/local/bin/brightness abs "$BRIGHTNESS_DUAL" ;;
+  laptop) doas /usr/local/bin/brightness abs "$BRIGHTNESS_STANDALONE" ;;
+esac
+
+# save setting
+echo "$MODE" >"$SETTING_FILE"
+
