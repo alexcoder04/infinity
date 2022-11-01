@@ -1,0 +1,73 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# MarkDown/My Dumb PREVIEWER - preview/compile markdown files
+
+. libsh || exit 1
+
+OPTIND=1
+
+# defaults
+EXPORT="no"
+INPUT_FILE="notes.md"
+TYPE="latex"
+
+# parse options
+while getopts "i:o:et:" flag; do
+  case "${flag}" in
+    e) EXPORT="yes" ;;
+    i) INPUT_FILE="${OPTARG}" ;;
+    o) OUTPUT_FILE="${OPTARG}" ;;
+    t) TYPE="${OPTARG}" ;;
+  esac
+done
+
+# some error checking
+[ -e "$INPUT_FILE" ] || die_notify "$INPUT_FILE does not exist"
+
+# output file
+BASENAME="${INPUT_FILE##*/}"; BASENAME="${BASENAME%.*}"
+if [ -z "$OUTPUT_FILE" ]; then
+  if [ "$EXPORT" = "yes" ]; then
+    OUTPUT_FILE="$HOME/Temp/${BASENAME}.pdf"
+  else
+    OUTPUT_FILE="${TMPDIR:-/tmp}/preview-$(echo "$BASENAME" | md5sum | cut -d" " -f1).pdf"
+  fi
+fi
+
+# actually compile
+case "$TYPE" in
+  latex)
+    pandoc \
+      -f markdown \
+      -t latex \
+      -V "margin-top=2.5cm" \
+      -V "margin-bottom=2cm" \
+      -V "margin-left=2.5cm" \
+      -V "margin-right=2cm" \
+      -o "$OUTPUT_FILE" \
+      "$INPUT_FILE" ;;
+  beamer)
+    pandoc \
+      -f markdown \
+      -t beamer \
+      -o "$OUTPUT_FILE" \
+      "$INPUT_FILE" ;;
+  *)
+    die_notify "specified type is not supported" ;;
+esac
+
+# exit if exported
+[ "$EXPORT" = "yes" ] && exit 0
+
+# start pdf reader if not already running
+if ! pgrep -f "zathura $OUTPUT_FILE" >/dev/null; then
+  zathura "$OUTPUT_FILE" &
+fi
+

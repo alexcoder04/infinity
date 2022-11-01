@@ -1,0 +1,29 @@
+#!/bin/sh
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# 
+# change screen brightness
+# ! run as root
+# (you can install it into /usr/local/bin and add a rule in the doas config to run it without password)
+
+[ -z "$1" ] && exit 1
+
+INTERFACE="$(find /sys/class/backlight/* | head -n 1)"
+CONTROL_FILE="$INTERFACE/brightness"
+MAX_BRIGHTNESS="$(cat "$INTERFACE/max_brightness")"
+
+actual_brightness="$(cat "$CONTROL_FILE")"
+case "$1" in
+  higher) echo "$(( actual_brightness + 500 ))" > "$CONTROL_FILE" ;;
+  lower) echo "$(( actual_brightness - 500 ))" > "$CONTROL_FILE" ;;
+  abs) [ -n "$2" ] && echo "$2" > "$CONTROL_FILE" ;;
+esac
+
+[ "$(cat "$CONTROL_FILE")" -gt "$MAX_BRIGHTNESS" ] \
+  && echo "$MAX_BRIGHTNESS" > "$CONTROL_FILE"
+
