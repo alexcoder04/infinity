@@ -1,0 +1,18 @@
+#        _                        _            ___  _  _
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|
+#
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+#
+# my crontab for the root user
+
+# m h  dom mon dow   command
+
+# maintainence {{{
+# trim file systems every wednesday and saturday at 16:00
+0 16 * * 3,6 /usr/bin/fstrim /
+1 16 * * 3,6 /usr/bin/fstrim /home
+2 16 * * 3,6 /usr/bin/fstrim /boot
+# }}}

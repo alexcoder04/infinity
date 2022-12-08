@@ -8,6 +8,11 @@
 # bash
 !/.bashrc
 
+# Dev
+!/Dev
+/Dev/*
+!/Dev/Config
+
 # .CONFIG {{{
 
 !/.config
@@ -98,6 +103,7 @@
 !/.local/bin/addmount
 !/.local/bin/bar-launch
 !/.local/bin/bitcoinprice
+!/.local/bin/brightness
 !/.local/bin/clipboardmgr
 !/.local/bin/cpustat
 !/.local/bin/diskspacecheck
@@ -115,7 +121,9 @@
 !/.local/bin/internet-search
 !/.local/bin/latex-build
 !/.local/bin/launch
+!/.local/bin/lf_run
 !/.local/bin/libsh
+!/.local/bin/md-preview
 !/.local/bin/monitors-set
 !/.local/bin/music
 !/.local/bin/myenv

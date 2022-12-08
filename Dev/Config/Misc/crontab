@@ -1,0 +1,29 @@
+#        _                        _            ___  _  _
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|
+#
+# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+#
+# my crontab
+# requires /usr/local/bin/myenv
+
+# m h  dom mon dow   command
+
+# cleanup {{{
+# delete old files (>2 weeks) from trash
+0 * * * * /usr/local/bin/myenv '/usr/bin/trash-empty 14'
+
+# delete old (>1 month) lf caches (they may contain sensible information, so let's not save them forever :)
+0 */2 * * * find "$HOME/.cache/lf" -atime 30 | xargs -n1 -I{} rm -f {}
+
+# so maybe this way?
+#0 */2 * * * /bin/rm -rf /home/alex/.w3m /home/alex/Downloads /home/alex/Desktop
+# }}}
+
+# load RSS feeds with newsboat
+#0 */3 * * * /usr/local/bin/myenv '/usr/bin/newsboat -x reload'
+
+# new wallpaper every 15 mins
+*/15 * * * * /usr/local/bin/myenv 'DISPLAY=:1 XAUTHORITY=$XDG_DATA_HOME/sx/xauthority SWAYSOCK=$XDG_RUNTIME_DIR/swaysock wallpaper-select -r'

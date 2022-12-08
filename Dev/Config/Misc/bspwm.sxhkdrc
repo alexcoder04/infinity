@@ -1,0 +1,60 @@
+#        _                        _            ___  _  _
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|
+#
+# Copyright (c) 2021 alexcoder04 <https://github.com/alexcoder04>
+#
+# sxhkd config for window-manager-specific functions of bspwm
+# so like switch desktops, resize windows etc
+
+########################### WM COMMANDS #######################################
+ctrl + alt + r
+    bspc wm -r
+
+########################### NAVIGATION ########################################
+# windows
+super + {_,shift +,ctrl +} {h,j,k,l}
+    bspc node -{f,s,p} {west,south,north,east}
+alt + {_,shift + }Tab
+    bspc wm -h off; \
+	bspc node {older,newer} -f; \
+	bspc wm -h on
+# desktops
+alt + {j,k}
+    bspc desktop -f {prev,next}.local
+super + {_,shift + }{1-9,0}
+    bspc {desktop -f,node -d} ^{1-9,10}
+# monitors
+alt + {h,l}
+    bspc monitor -f {prev,next}
+super + alt + {h,l}
+    bspc node -m {prev,next} --follow
+
+########################## CHANGE WINDOW PROPERTIES ###########################
+# fullscreen
+super + {_, shift + }F11
+    bspc node -t {fullscreen,tiled}
+# floating
+super + {_,shift + }space
+    bspc node -t {floating,tiled}
+# sticky
+super + F9
+    bspc node -t floating && bspc node -g sticky
+super + shift + F9
+    bspc node -t tiled && bspc node -g sticky
+# resize
+ctrl + alt + {h,j,k,l}
+    bspc node -z {right -15 0,bottom 0 +15,bottom 0 -15,right +15 0}
+
+################################## OTHER ######################################
+super + q
+    bspc node -c
+
+super + Escape
+    bspc node -p cancel
+
+super + F10
+    bspc-cmd
+
