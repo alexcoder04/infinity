@@ -1,0 +1,14 @@
+
+# ---------------------------------------------------------------
+# main part of /etc/conf.d/dmcrypt
+# ---------------------------------------------------------------
+# (drive encryption setup)
+# How long to wait for each timeout (in seconds).
+dmcrypt_key_timeout=1
+# Number of password retries.
+dmcrypt_retries=5
+# /home with passphrase
+target=home
+source=UUID="-UUID-"
+options=--allow-discards
+

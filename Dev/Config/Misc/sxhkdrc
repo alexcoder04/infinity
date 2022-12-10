@@ -1,0 +1,170 @@
+
+# TERMINAL AND RUN PROMPT
+super + Return
+    launch $SHELL
+
+super + shift + Return
+    launch -l env GLYPH_COMMAND=" " GLYPH_DESKTOP=" " GLYPH_PROMPT=" " sway-launcher-desktop
+
+# SYSTEM AND WINDOW MANAGER (CTRL+ALT) {{{
+ctrl + alt + s
+    screenlock --suspend
+ctrl + alt + shift + s
+    screenlock --suspend-only
+ctrl + alt + p
+    safe-poweroff poweroff
+ctrl + alt + q
+    wm-do quit
+ctrl + alt + e
+    screenlock
+# }}}
+
+# #############################################################################
+# DUNST
+# ######################################################################### {{{
+ctrl + space
+    dunstctl close
+ctrl + shift + space
+    dunstctl close-all
+ctrl + period
+    dunstctl history-pop
+ctrl + comma
+    dunstctl context
+
+# }}}
+
+# #############################################################################
+# EXTENDED CLIPBOARD
+# ######################################################################### {{{
+alt + c
+    clipboardmgr copy
+alt + v
+    clipboardmgr paste
+alt + Insert
+    clipboardmgr show
+super + Insert
+    clipboardmgr phrases
+
+# }}}
+
+# #############################################################################
+# ALL PROGRAMS
+# ######################################################################### {{{
+
+# FIRST ROW
+# Q, W: reserved for window manager
+super + e
+    launch -f trans -shell de:en
+super + shift + e
+    launch -f trans -shell en:de
+# R: reserved for run prompt
+# Z: reserved for window manager
+super + i
+    internet-search
+super + shift + i
+    qute-open
+super + p
+    launch -f python
+super + plus
+    pavucontrol
+
+# SECOND ROW
+# S: reserved for window manager
+super + d
+    +FILEMANAGER_MAIN+
+super + shift + d
+    +FILEMANAGER_SECONDARY+
+super + f
+	+BROWSER_MAIN+
+super + shift + f
+    +BROWSER_SECONDARY+
+super + shift + ctrl + f
+    firefox --private-window
+super + ctrl + f
+    firefox-profile-select
+# H, J, K, L: window-manager-reserved
+
+# THIRD ROW
+super + y
+    sh -c 'rofi -dmenu -p video | xargs mpv & notify-send -t 1000 "opening video..."'
+super + x
+    launch htop
+super + v
+    launch nvim
+super + b
+    launch newsboat-selector
+super + m
+    signal-desktop
+super + period
+    emoji-select unicode
+super + shift + period
+    emoji-select fontawesome
+super + minus
+    wallpaper-select random
+super + underscore
+    wallpaper-select
+
+# }}}
+
+# #############################################################################
+# FUNCTION KEYS
+# ######################################################################### {{{
+super + F1
+    kbd-layout-select
+super + F3
+    killall picom; picom --experimental-backends
+super + shift + F3
+    droidscreen
+super + F4
+    pwmgr
+super + shift + F4
+    pwmgr --otp
+super + F5
+    addmount
+super + ctrl + F5
+    addmount --usb
+super + shift + F5
+    unmount-drive
+super + F6
+    i3-mode-change
+super + F7
+    music
+super + shift + F7
+    music --stop
+super + F8
+    monitors-set --interactive
+# F9, F10, F11: window-manager-reserved
+super + F12
+	fix-keyboard
+
+# }}}
+
+# #############################################################################
+# OTHER KEYS
+# ######################################################################### {{{
+XF86MonBrightnessUp
+    sh -c 'doas /usr/local/bin/brightness higher; pkill -SIGRTMIN+2 "i3blocks|kherson"'
+XF86MonBrightnessDown
+    sh -c 'doas /usr/local/bin/brightness lower; pkill -SIGRTMIN+2 "i3blocks|kherson"'
+
+XF86Calculator
+    launch -f python3
+
+XF86AudioMute
+    sh -c 'pactl set-sink-mute @DEFAULT_SINK@ toggle; pkill -SIGRTMIN+1 "i3blocks|kherson"'
+XF86AudioMicMute
+    sh -c 'pactl set-source-mute @DEFAULT_SOURCE@ toggle; pkill -SIGRTMIN+1 "i3blocks|kherson"'
+XF86AudioLowerVolume
+    sh -c 'pactl set-sink-volume @DEFAULT_SINK@ -5%; pkill -SIGRTMIN+1 "i3blocks|kherson"'
+XF86AudioRaiseVolume
+    sh -c 'pactl set-sink-volume @DEFAULT_SINK@ +5%; pkill -SIGRTMIN+1 "i3blocks|kherson"'
+
+super + Print
+    screenshot
+super + shift + Print
+    screenshot --select
+super + ctrl + Print
+    scrcord start
+
+# }}}
+
