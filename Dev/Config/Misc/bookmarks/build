@@ -1,0 +1,31 @@
+#!/bin/bash
+#        _                        _            ___  _  _
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|
+#
+# Copyright (c) 2021 alexcoder04 <https://github.com/alexcoder04>
+#      
+# generate bookmarks for different applications
+
+. libsh || exit 1
+
+[ -z "$1" ] && die "please specify an output format"
+
+sourcefiles="${2:-./source*}"
+
+case "$1" in
+  lf)
+    awk '/^t/{print "map",$1,"$lf -remote \"send $id cd",$2 "\""}' <(cat $sourcefiles) ;;
+  bash)
+    awk '/^t/{print "alias",$1 "=\"cd",$2 "\""}' <(cat $sourcefiles) ;;
+  zsh)
+    echo '_bookmark-ls(){ exa --icons --group-directories-first }'
+    awk '/^t/{print "abbrev-alias",$1 "=\"cd",$2,"&& _bookmark-ls\""}' <(cat $sourcefiles) ;;
+  fish)
+    awk '/^t/{print "abbr",$1,"\"cd",$2 "\""}' <(cat $sourcefiles) ;;
+  *)
+    die "Not supported output format" ;;
+esac
+

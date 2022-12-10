@@ -1,0 +1,388 @@
+;  ____ _____ 
+; |  _ \_   _|  Derek Taylor (DistroTube)
+; | | | || |    http://www.youtube.com/c/DistroTube
+; | |_| || |    http://www.gitlab.com/dwt1/ 
+; |____/ |_|  	
+;
+; =====================================================
+;        _                        _            ___  _  _   
+;   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+;  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+; | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+;  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+;
+; <https://github.com/alexcoder04>
+; 
+; polybar config for i3 / bspwm
+; based on DT's config, adapted for own flavour and removed unused stuff
+
+[settings]
+throttle-output = 5
+throttle-output-for = 10
+screenchange-reload = true
+compositing-background = over
+compositing-foreground = over
+compositing-overline = over
+compositing-underline = over
+compositing-border = over
+format-foreground = #90282a36
+format-background = ${env:COLOR_WHITE:#ffffff}
+
+[colors]
+background = #95282a36
+foreground = ${env:COLOR_WHITE:#ffffff}
+cyan = ${env:COLOR_CYAN:#00ffff}
+green = ${env:COLOR_GREEN:#00ff00}
+lightgrey = ${env:COLOR_LIGHT_GREY:#dddddd}
+magenta = ${env:COLOR_MAGENTA:#ff0000}
+purple = ${env:COLOR_PURPLE:#ff00ff}
+red = ${env:COLOR_RED:#ff0000}
+yellow = ${env:COLOR_YELLOW:#ffff00}
+
+################################################################################
+############                         MAINBAR-I3                     ############
+################################################################################
+
+[bar/mainbar-i3]
+
+monitor = ${env:MONITOR:HDMI-1}
+monitor-strict = false
+override-redirect = false
+bottom = false
+width = 100%
+height = 28
+enable-ipc = true
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+
+font-0 = "Inconsolata:size=15;3"
+font-1 = "Font Awesome 5 Free:style=Regular:pixelsize=13;1"
+font-2 = "Font Awesome 5 Free:style=Solid:pixelsize=13;1"
+font-3 = "Font Awesome 5 Brands:pixelsize=13;1"
+
+modules-left = i3
+modules-right = updates bitcoin battery cpu temperature cpufreq memory wireless-network date volume 
+
+separator =  " "
+
+tray-position = right
+tray-detached = false
+tray-maxsize = 20
+tray-background = ${colors.background}
+tray-offset-x = 0
+tray-offset-y = 0
+tray-padding = 4
+tray-scale = 1.0
+
+click-left =
+click-middle =
+click-right =
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+double-click-left =
+double-click-middle =
+double-click-right =
+
+################################################################################
+############                         MAINBAR-BSPWM                  ############
+################################################################################
+
+[bar/mainbar-bspwm]
+
+monitor = ${env:MONITOR}
+height = 28
+width = 100%
+enable-ipc = true
+padding = 1
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+line-size = 3
+font-0 = "Inconsolata:size=15;3"
+font-1 = "Font Awesome 5 Free:style=Regular:pixelsize=13;1"
+font-2 = "Font Awesome 5 Free:style=Solid:pixelsize=13;1"
+font-3 = "Font Awesome 5 Brands:pixelsize=13;1"
+
+try-position = right
+tray-maxsize = 15
+tray-background = ${colors.background}
+tray-offset-x = 0
+tray-offset-y = 0
+tray-padding = 4
+tray-scale = 1.0
+
+modules-right = bitcoin battery cpu temperature cpufreq memory wireless-network date volume 
+modules-left = bspwm 
+separator = " "
+
+################################################################################
+############                       WM MODULES                       ############
+################################################################################
+
+[module/i3]
+type = internal/i3
+pin-workspaces = true
+wrapping-scroll = false
+label-mode = %mode%
+label-mode-padding = 1
+
+label-focused = %name%
+label-focused-background = #40f8f8f2
+label-focused-foreground = ${colors.foreground}
+label-focused-underline = ${colors.green}
+label-focused-padding = 1
+
+label-urgent-foreground = ${colors.red}
+label-urgent-padding = 1
+label-urgent-underline = ${colors.red}
+
+label-unfocused-padding = 1
+label-visible-padding = 1
+
+format-foreground = ${colors.foreground}
+format-background = ${colors.background}
+format-prefix = "  i3 |"
+
+################################################################################
+
+[module/bspwm]
+type = internal/bspwm
+
+format = <label-state>
+format-background = ${colors.background}
+format-foreground = ${colors.foreground}
+format-prefix = " bspwm |"
+
+ws-icon-0 = 0;
+ws-icon-1 = 1;
+ws-icon-2 = 2;
+ws-icon-3 = 3;
+ws-icon-4 = 4;
+ws-icon-5 = 5;
+ws-icon-6 = 6;
+ws-icon-7 = 7;
+ws-icon-8 = 8;
+ws-icon-9 = 9;
+ws-icon-default = ""
+
+label-empty = " %icon% "
+label-occupied = " %icon% "
+label-occupied-foreground = ${colors.cyan}
+label-occupied-underline = ${colors.cyan}
+label-urgent = " %icon% "
+label-urgent-background = #40f8f8f2
+label-urgent-foreground = ${colors.red}
+label-focused = " %icon% "
+label-focused-underline = ${colors.green}
+label-focused-foreground = ${colors.green}
+label-focused-background = #40f8f8f2
+
+label-separator = |
+
+###############################################################################
+############                       MODULES A-Z                      ############
+################################################################################
+
+[module/battery]
+type = internal/battery
+interval = 15
+battery = BAT1
+adapter = AC0
+full-at = 97
+
+format-charging = <animation-charging> <label-charging>
+label-charging =  %percentage%%
+format-charging-foreground = ${colors.foreground}
+format-charging-background = ${colors.background}
+format-charging-underline = ${colors.green}
+
+format-discharging = <ramp-capacity> <label-discharging>
+label-discharging =  %percentage%%
+format-discharging-underline = ${colors.yellow}
+format-discharging-foreground = ${colors.foreground}
+format-discharging-background = ${colors.background}
+
+format-full-prefix = " "
+format-full-prefix-foreground = ${colors.green}
+format-full-underline = ${colors.green}
+format-full-foreground = ${colors.foreground}
+format-full-background = ${colors.background}
+
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+ramp-capacity-foreground = ${colors.foreground}
+
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+animation-charging-foreground = ${colors.green}
+animation-charging-framerate = 1500
+
+################################################################################
+[module/bitcoin]
+type = custom/script
+exec = bitcoinprice -i -s
+interval = 1200
+click-left = notify-send "Crypto prices" "$(bitcoinprice -c BTC -sni)\n$(bitcoinprice -c XMR -sni)"
+
+format-background = ${colors.background}
+format-foreground = ${colors.foreground}
+format-underline = ${colors.green}
+
+################################################################################
+
+[module/cpu]
+type = internal/cpu
+interval = 1
+format-foreground = ${colors.foreground}
+format-background = ${colors.background}
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground}
+format-underline = ${colors.magenta}
+
+################################################################################
+[module/cpufreq]
+type = custom/script
+exec = cat /proc/cpuinfo | grep "cpu MHz" | head -n 1 | awk '{print $NF,"MHz"}'
+interval = 3
+
+format-prefix = "  "
+format-background = ${colors.background}
+format-foreground = ${colors.foreground}
+format-underline = ${colors.cyan}
+
+################################################################################
+
+[module/date]
+type = internal/date
+interval = 1
+date = %a, %d.%m
+time = %T
+;date = "%a %d.%m"
+;time = "%H:%M:%S"
+format-prefix = "  "
+format-prefix-foreground = ${colors.foreground}
+format-foreground = ${colors.foreground}
+format-background = ${colors.background}
+format-underline = ${colors.foreground}
+#label = %time% %date%
+label = %date% - %time%
+
+################################################################################
+
+[module/memory]
+type = internal/memory
+interval = 10
+label = %mb_used%
+
+format = <label>
+format-prefix = "  "
+format-prefix-foreground = ${colors.foreground}
+format-underline = ${colors.purple}
+format-foreground = ${colors.foreground}
+format-background = ${colors.background}
+
+################################################################################
+
+[module/temperature]
+type = internal/temperature
+interval = 5
+thermal-zone = 7
+
+warn-temperature = 60
+format = <ramp> <label>
+format-foreground = ${colors.foreground}
+format-background = ${colors.background}
+format-underline = ${colors.red}
+format-warn = <ramp> <label-warn>
+format-warn-underline = ${colors.red}
+format-warn-foreground = ${colors.yellow}
+format-warm-background = ${colors.background}
+label = %temperature-c%
+label-warn =  %temperature-c%
+label-warn-foreground = ${colors.yellow}
+label-warn-background = ${colors.background}
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-3 = 
+ramp-4 = 
+ramp-foreground = ${colors.foreground}
+ramp-background = ${colors.background}
+
+################################################################################
+
+[module/updates]
+type = custom/script
+exec = checkupdates | wc -l
+interval = 1200
+
+format-prefix = "  "
+
+format-background = ${colors.background}
+format-foreground = ${colors.foreground}
+format-underline = ${colors.purple}
+
+################################################################################
+
+[module/volume]
+type = internal/alsa
+format-volume = <label-volume> <bar-volume>
+format-underline = ${colors.red}
+
+label-volume = ""
+label-volume-foreground = ${colors.foreground}
+label-muted = muted
+
+bar-volume-width = 5
+bar-volume-foreground-0 = ${colors.lightgrey}
+bar-volume-foreground-1 = ${colors.cyan}
+bar-volume-foreground-2 = ${colors.cyan}
+bar-volume-foreground-3 = ${colors.green}
+bar-volume-foreground-4 = ${colors.green}
+bar-volume-foreground-5 = ${colors.yellow}
+bar-volume-foreground-6 = ${colors.red}
+bar-volume-gradient = false
+bar-volume-indicator = |
+bar-volume-fill = 
+bar-volume-empty = 
+bar-volume-empty-foreground = ${colors.foreground}
+format-volume-foreground = ${colors.foreground}
+format-volume-background = ${colors.background}
+format-muted-prefix = "  "
+format-muted-prefix-foreground = ${colors.red}
+format-muted-foreground = ${colors.red}
+format-muted-background = ${colors.background}
+
+################################################################################
+
+[module/wireless-network]
+type = internal/network
+interface = wlan0
+interval = 5
+
+label-connected =  %upspeed%  %downspeed%
+format-connected = <label-connected>
+format-connected-foreground = ${colors.foreground}
+format-connected-background = ${colors.background}
+format-connected-prefix = "  "
+format-connected-prefix-foreground = ${colors.foreground}
+format-connected-prefix-background = ${colors.background}
+format-connected-underline = ${colors.green}
+
+label-disconnected = "  "
+format-disconnected = <label-disconnected>
+format-disconnected-foreground = ${colors.yellow}
+format-disconnected-background = ${colors.background}
+format-disconnected-underline =${colors.red}
+
+# vim:ft=dosini

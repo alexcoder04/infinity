@@ -1,0 +1,43 @@
+[global]
+    follow = mouse
+    width = 500
+    height = 100
+    origin = bottom-left
+    notification_limit = 7
+    offset = 10x10
+    separator_height = 2
+    frame_color = "+COLOR_CYAN+"
+    separator_color = frame
+    sort = true
+
+    font = +FONT+ 15
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+
+    icon_position = left
+    max_icon_size = 32
+
+    dmenu = /usr/bin/rofi -dmenu -i -p "dunst"
+    browser = /usr/bin/firefox
+    corner_radius = 5
+
+    mouse_left_click = close_current
+    mouse_middle_click = close_all
+    mouse_right_click = do_action
+
+[urgency_low]
+    background = "+COLOR_DARK_GREY+"
+    foreground = "+COLOR_WHITE+"
+    timeout = 10
+
+[urgency_normal]
+    background = "+COLOR_BLACK+"
+    foreground = "+COLOR_WHITE+"
+    timeout = 15
+
+[urgency_critical]
+    background = "+COLOR_RED+"
+    foreground = "+COLOR_BLACK+"
+    frame_color = "+COLOR_YELLOW+"
+    timeout = 0
