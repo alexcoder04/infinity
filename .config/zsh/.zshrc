@@ -5,7 +5,7 @@
 # | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
 #  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|
 #
-# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# Copyright (c) 2021-2023 alexcoder04 <https://github.com/alexcoder04>
 #      
 # zsh config
 
@@ -79,6 +79,8 @@ setopt interactivecomments
 ZSH_HIGHLIGHT_STYLES[comment]="fg=white,dim"
 # }}}
 
-# startup stuff if not inside lf
-[ -z "$LF_LEVEL" ] && source "$ZDOTDIR/startup.zsh"
+# startup stuff if not inside lf or vscode
+[ -z "$LF_LEVEL" ] && [ -z "$VSCODE_INJECTION" ] && source "$ZDOTDIR/startup.zsh"
+
+alias sp='export XDG_SESSION_TYPE=wayland && export $(dbus-launch) && startplasma-wayland --drm'
 

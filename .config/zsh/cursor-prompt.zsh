@@ -5,7 +5,7 @@
 # | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
 #  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|
 #
-# Copyright (c) 2022 alexcoder04 <https://github.com/alexcoder04>
+# Copyright (c) 2022-2023 alexcoder04 <https://github.com/alexcoder04>
 #      
 # zsh prompt/cursor config
 
@@ -17,11 +17,11 @@ _prompt_check_git(){
 
 _prompt_check_chroot(){
   command -v ischroot >/dev/null || return
-  ischroot && printf "[ %%F{blue}chroot%%f ]"
+  ischroot && printf "[ %%F{blue}chroot%%f ] "
 }
 
 _prompt_check_lf(){
-  [ ! -z "$LF_LEVEL" ] && printf "[ %%F{blue}lf$LF_LEVEL%%f ]"
+  [ ! -z "$LF_LEVEL" ] && printf "[ %%F{blue}lf$LF_LEVEL%%f ] "
 }
 
 _prompt_check_pwd() {
@@ -31,6 +31,19 @@ _prompt_check_pwd() {
 _default_cursor() {
    echo -ne '\e[5 q'
 }
+
+# measure command execution time {{{
+preexec(){
+    _command_started="$(date +%s)"
+}
+
+_prompt_last_command_duration(){
+    [ -z "$_command_started" ] && return
+    local _command_duration="$(("$(date +%s)" - "$_command_started"))"
+    [ "$_command_duration" -lt 3  ] && return
+    printf "[ %%F{yellow}took %%B${_command_duration}s%%b%%f ] "
+}
+# }}}
 # }}}
 
 # Vi/Insert mode indicator {{{
@@ -68,5 +81,5 @@ function TRAPINT() {
 # ACTUAL PROMPT
 setopt prompt_subst
 PROMPT='%F{blue}[%f %B%F{green}%n%b%F{red}@%F{yellow}%m%f %F{blue}]%f in %F{cyan}$(_prompt_check_pwd)%f $(_prompt_check_git)
-$(_prompt_check_chroot)$(_prompt_check_lf)%1(j.%F{magenta} %j%f.) ${vim_mode} '
+$(_prompt_check_chroot)$(_prompt_check_lf)$(_prompt_last_command_duration)%1(j.%F{magenta} %j%f.) ${vim_mode} '
 

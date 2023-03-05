@@ -5,7 +5,7 @@
 # | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
 #  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|
 #
-# Copyright (c) 2021-2022 alexcoder04 <https://github.com/alexcoder04>
+# Copyright (c) 2021-2023 alexcoder04 <https://github.com/alexcoder04>
 #      
 # zsh functions
 
@@ -86,6 +86,25 @@ fzfcd(){
   [ -d "$dir" ] && cd "$dir"
   unset dest
   unset dir
+}
+# }}}
+
+# manage system services {{{
+s(){
+  if command -v systemctl >/dev/null; then
+    case "$1" in
+      status) systemctl "$@" ;;
+      *) sudo systemctl "$@" ;;
+    esac
+    return
+  fi
+
+  case "$1" in
+    status) rc-service "$2" status ;;
+    start | stop | restart) sudo rc-service "$2" "$1" ;;
+    enable) sudo rc-update add "$2" ;;
+    disable) sudo rc-update del "$2" ;;
+  esac
 }
 # }}}
 
