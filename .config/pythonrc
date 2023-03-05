@@ -1,11 +1,19 @@
 #!/usr/bin/python3
-
+#        _                        _            ___  _  _   
+#   __ _| | _____  _____ ___   __| | ___ _ __ / _ \| || |  
+#  / _` | |/ _ \ \/ / __/ _ \ / _` |/ _ \ '__| | | | || |_ 
+# | (_| | |  __/>  < (_| (_) | (_| |  __/ |  | |_| |__   _|
+#  \__,_|_|\___/_/\_\___\___/ \__,_|\___|_|   \___/   |_|  
+# 
+# Copyright (c) 2022-2023 alexcoder04 <alexcoder04@protonmail.com>
+# 
 # python config for interactive shell
 # the location of this file is defined in $PYTHONSTARTUP
 
 import atexit
 import math
 import os
+import random
 import readline
 import sys
 
@@ -26,6 +34,53 @@ def write_history():
 atexit.register(write_history)
 # }}}
 
-print("Welcome to the Python Shell!")
-print("Available libraries: math, os, sys")
+# shell-like functions {{{
+def cls(*args):
+    os.system("clear")
+
+def ls(*args):
+    if len(args) == 0:
+        args = (".")
+    for a in args:
+        if a == "":
+            a = "."
+        print(os.listdir(a))
+
+def pwd(*args):
+    print(os.getcwd())
+
+def cd(*args):
+    if len(args) == 0:
+        args = ("~")
+    dest = os.path.abspath(os.path.expanduser(args[0]))
+    if not os.path.isdir(dest):
+        print(f"'{dest}' doesn't exist or isn't a folder")
+        return
+    os.chdir(dest)
+    print(f"Changed directory to \"{dest}\"")
+# }}}
+
+# short functions {{{
+def q(*args):
+    sys.exit()
+
+def c(*args):
+    os.system(*args)
+# }}}
+
+# prompt {{{
+_line_number = 0
+
+class _PS1:
+    def __str__(self):
+        global _line_number
+        _line_number = 0
+        return f"[ \033[33m{os.getcwd()}\033[0m ] \033[1;32m🐍 \033[0m"
+
+sys.ps1 = _PS1()
+sys.ps2 = "              > | "
+# }}}
+
+print("\033[36mWelcome to the Python Shell!\033[0m")
+print("Available libraries: math, random, os, sys")
 
