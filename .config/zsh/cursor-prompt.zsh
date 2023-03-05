@@ -34,14 +34,19 @@ _default_cursor() {
 
 # measure command execution time {{{
 preexec(){
-    _command_started="$(date +%s)"
+  _command_started="$(date +%s)"
 }
 
 _prompt_last_command_duration(){
-    [ -z "$_command_started" ] && return
-    local _command_duration="$(("$(date +%s)" - "$_command_started"))"
-    [ "$_command_duration" -lt 3  ] && return
-    printf "[ %%F{yellow}took %%B${_command_duration}s%%b%%f ] "
+  [ -z "$_command_started" ] && return
+  local _command_duration="$(("$(date +%s)" - "$_command_started"))"
+  [ "$_command_duration" -lt 3  ] && return
+  if [ "$_command_duration" -gt 100 ]; then
+    local _secs="$(("$_command_duration" % 60))"
+    local _mins="$((($_command_duration - $_secs) / 60))"
+    _command_duration="${_mins}m $_secs"
+  fi
+  printf "[ %%F{yellow}took %%B${_command_duration}s%%b%%f ] "
 }
 # }}}
 # }}}
