@@ -20,9 +20,12 @@ inoremap ;l <Enter>\item<Space>
 
 inoremap ;. \cdot<Space>
 inoremap ;sq \sqrt{}<Space><++><Esc>F{a
-inoremap ;f \frac{}{<++>}<Space><++><Esc>F{F{a
+inoremap ;fr \frac{}{<++>}<Space><++><Esc>F{F{a
 inoremap ;$ $$<Space><++><Esc>F$i
 inoremap ;D \Delta<Space>
+
+inoremap ;fn \footnote{}<Space><++><Esc>F}i
+inoremap ;fc \footcite[][p.<Space>]{<++>}<Space><++><Esc>F]i
 
 inoremap ;! <Esc>:r $HOME/Documents/Data/Templates/latex/default.tex<Enter>
 nnoremap <leader>e yyI\begin{<Esc>A}<Esc>pI\end{<Esc>A}<Esc>O
