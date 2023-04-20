@@ -11,6 +11,20 @@
 
 source libsh || echo "Warning: Failed to source libsh!"
 
+# yes-no prompt {{{
+yesno(){
+  printf "%s" "${1:-[y/n] ?}"
+  read ans
+  case "$ans" in
+    y|Y|"")
+      unset ans
+      return 0 ;;
+  esac
+  unset ans
+  return 1
+}
+# }}}
+
 # edit config files {{{
 conf(){
   case "$1" in
@@ -105,6 +119,15 @@ s(){
     enable) sudo rc-update add "$2" ;;
     disable) sudo rc-update del "$2" ;;
   esac
+}
+# }}}
+
+# start plasma wayland session {{{
+sp(){
+    export XDG_SESSION_TYPE=wayland
+    export MOZ_ENABLE_WAYLAND=1
+    export $(dbus-launch)
+    startplasma-wayland --drm
 }
 # }}}
 

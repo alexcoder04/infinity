@@ -82,5 +82,10 @@ ZSH_HIGHLIGHT_STYLES[comment]="fg=white,dim"
 # startup stuff if not inside lf or vscode
 [ -z "$LF_LEVEL" ] && [ -z "$VSCODE_INJECTION" ] && source "$ZDOTDIR/startup.zsh"
 
-alias sp='export XDG_SESSION_TYPE=wayland && export $(dbus-launch) && startplasma-wayland --drm'
+sp(){
+    export XDG_SESSION_TYPE=wayland
+    export MOZ_ENABLE_WAYLAND=1
+    export $(dbus-launch)
+    startplasma-wayland --drm
+}
 
